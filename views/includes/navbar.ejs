@@ -1,0 +1,161 @@
+<style>
+.search-form {
+  position: relative;
+  width: 280px;
+}
+
+.search-inp {
+  border-radius: 999px;
+  padding: 0.55rem 3rem 0.55rem 1.2rem;
+  border: 1px solid #ddd;
+}
+
+.search-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: blue;
+  color: #fff;
+  border-radius: 999px;
+  border: none;
+  padding: 0.35rem 0.75rem;
+}
+
+.search-dropdown {
+  position: absolute;
+  top: 110%;
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  display: none;
+  z-index: 1000;
+}
+
+.search-dropdown.active {
+  display: block;
+}
+
+.search-item {
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+}
+
+.search-item:hover {
+  background: #f7f7f7;
+}
+
+@media (max-width: 768px) {
+  .search-form {
+    width: 100%;
+    margin: 0.75rem 0;
+  }
+}
+</style>
+
+<nav class="navbar navbar-expand-md bg-white border-bottom sticky-top">
+  <div class="container-fluid">
+
+    <a class="navbar-brand" href="/listings">
+      <i class="fa-solid fa-bed fs-4"></i>
+    </a>
+
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+
+      <div class="navbar-nav">
+        <a class="nav-link" href="/listings">Explore</a>
+      </div>
+
+      <!-- SEARCH -->
+      <div class="navbar-nav ms-auto me-3">
+        <form
+          class="search-form"
+          id="searchForm"
+          action="/listings"
+          method="GET">
+
+          <input
+            class="form-control search-inp"
+            id="searchInput"
+            name="q"
+            type="search"
+            placeholder="Search destinations"
+            autocomplete="off"
+            value="<%= q %>"
+          />
+
+          <button class="search-btn" type="submit">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+
+          <div class="search-dropdown" id="searchDropdown">
+            <div class="search-item">Delhi</div>
+            <div class="search-item">Mumbai</div>
+            <div class="search-item">Bangalore</div>
+            <div class="search-item">Goa</div>
+            <div class="search-item">Manali</div>
+          </div>
+        </form>
+      </div>
+
+      <div class="navbar-nav">
+        <a class="nav-link" href="/listings/new">TripNest your Home</a>
+
+        <% if(!currentUser) { %>
+          <a class="nav-link fw-semibold" href="/signup">Signup</a>
+          <a class="nav-link fw-semibold" href="/login">Login</a>
+        <% } %>
+
+        <% if(currentUser) { %>
+          <a class="nav-link fw-semibold" href="/logout">Logout</a>
+        <% } %>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<script>
+const input = document.getElementById("searchInput");
+const dropdown = document.getElementById("searchDropdown");
+const items = document.querySelectorAll(".search-item");
+const form = document.getElementById("searchForm");
+
+let debounceTimer;
+
+// Auto search when typing
+input.addEventListener("input", () => {
+  dropdown.classList.add("active");
+  clearTimeout(debounceTimer);
+
+  debounceTimer = setTimeout(() => {
+    const query = input.value.trim();
+    if (query === "") {
+      window.location.href = "/listings";
+    } else {
+      window.location.href = `/listings?q=${encodeURIComponent(query)}`;
+    }
+  }, 400);
+});
+
+// Dropdown click
+items.forEach(item => {
+  item.addEventListener("click", () => {
+    input.value = item.innerText;
+    dropdown.classList.remove("active");
+    window.location.href = `/listings?q=${encodeURIComponent(input.value)}`;
+  });
+});
+
+// Click outside
+document.addEventListener("click", e => {
+  if (!form.contains(e.target)) {
+    dropdown.classList.remove("active");
+  }
+});
+</script>

@@ -1,0 +1,87 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="row">
+    <div class="col-8 offset-2">
+
+        <% if (!listing) { %>
+            <h3>Listing not found</h3>
+            <a href="/listings" class="btn btn-secondary">Back to Listings</a>
+        <% } else { %>
+
+            <h3>Edit Listing</h3>
+
+            <form method="POST" 
+                  action="/listings/<%= listing._id %>?_method=PUT" 
+                  novalidate 
+                  class="needs-validation" enctype="multipart/form-data">
+
+                <!-- TITLE -->
+                <label class="form-label">Title</label>
+                <input type="text" 
+                       name="listing[title]" 
+                       value="<%= listing.title %>" 
+                       class="form-control" 
+                       required>
+                <div class="invalid-feedback">Title is required.</div>
+                <br>
+
+                <!-- DESCRIPTION -->
+                <label class="form-label">Description</label>
+                <textarea name="listing[description]" 
+                          class="form-control" 
+                          rows="4" 
+                          required><%= listing.description %></textarea>
+                <div class="invalid-feedback">Description is required.</div>
+                <br>
+        
+                <!-- IMAGE -->
+                <label class="form-label">Upload New Image</label>
+                <input type="file" 
+                       name="listing[image]" 
+                      class="form-control">
+                <div class="invalid-feedback">Please provide a valid image URL.</div>
+                <br>
+
+                <!-- PRICE & COUNTRY -->
+                <div class="row">
+                    <div class="mb-3 col-md-4">
+                        <label class="form-label">Price</label>
+                        <input type="number" 
+                               name="listing[price]" 
+                               value="<%= listing.price || '' %>" 
+                               class="form-control" 
+                               required 
+                               min="1">
+                        <div class="invalid-feedback">Please enter a valid price (minimum 1).</div>
+                    </div>
+
+                    <div class="mb-3 col-md-8">
+                        <label class="form-label">Country</label>
+                        <input type="text" 
+                               name="listing[country]" 
+                               value="<%= listing.country %>" 
+                               class="form-control" 
+                               required>
+                        <div class="invalid-feedback">Country is required.</div>
+                    </div>
+                </div>
+
+                <!-- LOCATION -->
+                <label class="form-label">Location</label>
+                <input type="text" 
+                       name="listing[location]" 
+                       value="<%= listing.location %>" 
+                       class="form-control" 
+                       required>
+                <div class="invalid-feedback">Location is required.</div>
+                <br>
+
+                <button type="submit" class="btn btn-primary">Update</button>
+                <a href="/listings/<%= listing._id %>" class="btn btn-secondary ms-2">Cancel</a>
+
+            </form>
+
+        <% } %>
+
+    </div>
+</div>

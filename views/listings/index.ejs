@@ -1,0 +1,316 @@
+<% layout("/layouts/boilerplate") -%>
+
+<style>
+/* ================= FILTER BAR ================= */
+
+.filters-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+/* Horizontal filters */
+.filters-scroll {
+  display: flex;
+  gap: 2.2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex: 1;
+}
+
+.filters-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Filter item */
+.filter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 72px;
+  text-decoration: none;
+  color: #717171;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.filter i {
+  font-size: 1.2rem;
+}
+
+.filter:hover {
+  color: #000;
+  opacity: 1;
+}
+
+.filter.active {
+  color: #000;
+  opacity: 1;
+  border-bottom: 2px solid #000;
+  padding-bottom: 0.5rem;
+}
+
+/* ================= FILTER BUTTON ================= */
+
+.filter-btn {
+  display: none; /* controlled by JS */
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  background: #fff;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+/* ================= TAX PILL ================= */
+
+.tax-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  background: #fff;
+}
+
+/* Switch */
+.switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background-color: #ccc;
+  border-radius: 999px;
+  transition: 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.switch input:checked + .slider {
+  background-color: #000;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(16px);
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+  .filters-scroll {
+    display: none;
+  }
+
+  .filter-btn {
+    display: inline-flex !important;
+  }
+}
+</style>
+
+<!-- ================= FILTER BAR ================= -->
+
+<div class="filters-wrapper">
+
+  <!-- FILTER LIST -->
+  <div class="filters-scroll">
+
+    <a href="/listings" class="filter" data-category="All">
+      <i class="fa-solid fa-border-all"></i>
+      <span>All</span>
+    </a>
+
+    <a href="/listings?category=Trending" class="filter" data-category="Trending">
+      <i class="fa-solid fa-fire"></i>
+      <span>Trending</span>
+    </a>
+
+    <a href="/listings?category=Room" class="filter" data-category="Room">
+      <i class="fa-solid fa-bed"></i>
+      <span>Rooms</span>
+    </a>
+
+    <a href="/listings?category=Iconic Cities" class="filter" data-category="Iconic Cities">
+      <i class="fa-solid fa-city"></i>
+      <span>Iconic Cities</span>
+    </a>
+
+    <a href="/listings?category=Castles" class="filter" data-category="Castles">
+      <i class="fa-solid fa-chess-rook"></i>
+      <span>Castles</span>
+    </a>
+
+    <a href="/listings?category=Amazing Pools" class="filter" data-category="Amazing Pools">
+      <i class="fa-solid fa-person-swimming"></i>
+      <span>Pools</span>
+    </a>
+
+    <a href="/listings?category=Camping" class="filter" data-category="Camping">
+      <i class="fa-solid fa-campground"></i>
+      <span>Camping</span>
+    </a>
+
+    <a href="/listings?category=Farm" class="filter" data-category="Farm">
+      <i class="fa-solid fa-tractor"></i>
+      <span>Farms</span>
+    </a>
+
+    <a href="/listings?category=Arctic" class="filter" data-category="Arctic">
+      <i class="fa-solid fa-snowflake"></i>
+      <span>Arctic</span>
+    </a>
+    
+  </div>
+
+  <!-- FILTER BUTTON -->
+  <button
+    id="filterBtn"
+    class="filter-btn"
+    data-bs-toggle="offcanvas"
+    data-bs-target="#mobileFilters">
+    <i class="fa-solid fa-sliders"></i>
+    Filters
+  </button>
+
+  <!-- TAX TOGGLE -->
+  <div class="tax-pill">
+    <span>Display total after taxes</span>
+    <label class="switch">
+      <input type="checkbox" id="taxSwitch">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+</div>
+
+<!-- ================= OFFCANVAS FILTERS ================= -->
+
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="mobileFilters">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Filters</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+
+  <div class="offcanvas-body">
+    <div class="row row-cols-2 g-3 text-center">
+
+      <a href="/listings" class="filter">All</a>
+      <a href="/listings?category=Trending" class="filter">Trending</a>
+      <a href="/listings?category=Room" class="filter">Rooms</a>
+      <a href="/listings?category=Iconic Cities" class="filter">Iconic Cities</a>
+      <a href="/listings?category=Castles" class="filter">Castles</a>
+      <a href="/listings?category=Amazing Pools" class="filter">Amazing Pools</a>
+      <a href="/listings?category=Camping" class="filter">Camping</a>
+      <a href="/listings?category=Farm" class="filter">Farms</a>
+      <a href="/listings?category=Arctic" class="filter">Arctic</a>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================= LISTINGS ================= -->
+
+<div class="row row-cols-lg-3 row-cols-md-3 row-cols-sm-1 mt-4">
+
+  <% for (let listing of alllistings) { %>
+    <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
+      <div class="card mb-4">
+
+        <img
+          src="<%= listing.image?.url || listing.image %>"
+          class="card-img-top"
+          style="height:200px; object-fit:cover;"
+        />
+
+        <div class="card-body">
+          <h5><%= listing.title %></h5>
+          <p class="text-muted mb-1"><%= listing.location %></p>
+
+          <p class="price" data-base-price="<%= listing.price %>">
+            ₹ <%= listing.price.toLocaleString("en-IN") %>
+          </p>
+        </div>
+
+      </div>
+    </a>
+  <% } %>
+
+</div>
+
+<!-- ================= SCRIPT ================= -->
+
+<script>
+  /* TAX TOGGLE */
+  const taxSwitch = document.getElementById("taxSwitch");
+  const prices = document.querySelectorAll(".price");
+  const TAX_RATE = 0.18;
+
+  taxSwitch.addEventListener("change", () => {
+    prices.forEach(p => {
+      const base = Number(p.dataset.basePrice);
+      p.innerText = taxSwitch.checked
+        ? `₹ ${(base + base * TAX_RATE).toLocaleString("en-IN")} (incl. tax)`
+        : `₹ ${base.toLocaleString("en-IN")}`;
+    });
+  });
+
+  /* ACTIVE FILTER */
+  const filters = document.querySelectorAll(".filter");
+  const saved = localStorage.getItem("activeCategory");
+
+  filters.forEach(filter => {
+    if (filter.dataset.category === saved) {
+      filter.classList.add("active");
+    }
+    filter.addEventListener("click", () => {
+      localStorage.setItem("activeCategory", filter.dataset.category);
+    });
+  });
+
+  /* FILTER BUTTON OVERFLOW LOGIC */
+  const filtersScroll = document.querySelector(".filters-scroll");
+  const filterBtn = document.getElementById("filterBtn");
+
+  function checkFilterOverflow() {
+    if (!filtersScroll) return;
+
+    const isOverflowing =
+      filtersScroll.scrollWidth > filtersScroll.clientWidth;
+
+    if (isOverflowing || window.innerWidth <= 768) {
+      filterBtn.style.display = "inline-flex";
+    } else {
+      filterBtn.style.display = "none";
+    }
+  }
+
+  window.addEventListener("load", checkFilterOverflow);
+  window.addEventListener("resize", checkFilterOverflow);
+</script>

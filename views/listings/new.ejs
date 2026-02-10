@@ -1,0 +1,66 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="row">
+    <div class="col-8 offset-2">
+
+        <h3>Create a New Listing</h3>
+
+        <form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
+
+            <!-- TITLE -->
+            <label class="form-label">Title</label>
+            <input name="listing[title]" placeholder="Enter title" type="text" class="form-control" required>
+            <div class="invalid-feedback">Title is required.</div>
+            <br>
+
+            <!-- DESCRIPTION -->
+            <label class="form-label">Description</label>
+            <textarea name="listing[description]" placeholder="Enter description" class="form-control" required></textarea>
+            <div class="invalid-feedback">Description is required.</div>
+            <br>
+
+            <!-- IMAGE -->
+            <label class="form-label">Upload image</label>
+            <input name="listing[image]" placeholder="Enter image URL/link" type="file" class="form-control">
+            required
+            <br>
+
+            <!-- PRICE & COUNTRY -->
+            <div class="row">
+                <div class="mb-3 col-md-4">
+                    <label class="form-label">Price</label>
+                    <input name="listing[price]" placeholder="Enter the price" type="number" class="form-control" required min="1">
+                    <div class="invalid-feedback">Please enter a valid price.</div>
+                </div>
+
+                <div class="mb-3 col-md-8">
+                    <label class="form-label">Country</label>
+                    <input name="listing[country]" placeholder="Enter country" type="text" class="form-control" required>
+                    <div class="invalid-feedback">Country is required.</div>
+                </div>
+            </div>
+
+            <!-- LOCATION -->
+            <label class="form-label">Location</label>
+            <input name="listing[location]" placeholder="Enter location" type="text" class="form-control" required>
+            <div class="invalid-feedback">Location is required.</div>
+            <br>
+
+            <label class="form-label">Category</label>
+<select name="listing[category]" class="form-select" required>
+  <option value="">Select category</option>
+  <option value="Iconic Cities">Iconic Cities</option>
+  <option value="Castles">Castles</option>
+  <option value="Amazing Pools">Amazing Pools</option>
+  <option value="Camping">Camping</option>
+  <option value="Farm">Farm</option>
+  <option value="Arctic">Arctic</option>
+</select>
+<br>
+
+            <button class="btn btn-primary">Add</button>
+
+        </form>
+
+    </div>
+</div>
