@@ -4,9 +4,6 @@ if (process.env.NODE_ENV !== "production") {
 
 const dns = require('dns');
 dns.setDefaultResultOrder('ipv4first');
-
-
-
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -14,11 +11,10 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsmate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
-
 const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
-
+const MongoStore = require('connect-mongo').default;
 const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
@@ -36,16 +32,32 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
 // ================== DATABASE ==================
-const dburl = process.env.ATLASDB_URL;
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.DB_URL);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error("MongoDB connection failed:", error.message);
+    process.exit(1);
+  }
+};
 
-mongoose
-  .connect(dburl)
-  .then(() => console.log("MongoDB Connected ✅"))
-  .catch((err) => console.log("MongoDB Error:", err));
+connectDB();
+//======================== SESSION MONGO CONFIG ============
+
+const store = MongoStore.create({
+  mongoUrl: process.env.DB_URL,
+  crypto: {
+    secret: process.env.SECRET,
+  },
+  touchAfter: 24 * 3600,
+});
 
 // ================== SESSION CONFIG ==================
+
 const sessionOption = {
-  secret: "mysupersecretcode",
+  store,
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
