@@ -2,14 +2,14 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 
-const users = require("../controllers/user"); // ✅ path must match
+const users = require("../controllers/user");
 const { saveRedirectUrl } = require("../middleware");
 
-// SIGNUP
+// Signup
 router.get("/signup", users.renderSignupForm);
 router.post("/signup", saveRedirectUrl, users.signup);
 
-// LOGIN
+// Login
 router.get("/login", users.renderLoginForm);
 router.post(
   "/login",
@@ -21,7 +21,12 @@ router.post(
   users.login
 );
 
-// LOGOUT
+// Logout
 router.get("/logout", users.logout);
+
+// OTP reset
+router.get("/forgot", users.renderForgotForm);
+router.post("/forgot", users.sendOtp);
+router.post("/verify-otp", users.verifyOtp);
 
 module.exports = router;

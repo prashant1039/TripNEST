@@ -11,7 +11,9 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "TripNest_DEV",
-    allowedFormats: ["png", "jpg", "jpeg"],
+
+    // ✅ correct key
+    allowed_formats: ["png", "jpg", "jpeg"],
   },
 });
 

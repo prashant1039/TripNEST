@@ -10,10 +10,13 @@ const listingSchema = new Schema({
 
   description: String,
 
-  image: {
-    url: String,
-    filename: String,
-  },
+  // 🖼 MULTIPLE IMAGES
+  image: [
+    {
+      url: String,
+      filename: String,
+    }
+  ],
 
   price: Number,
   location: String,
@@ -30,15 +33,16 @@ const listingSchema = new Schema({
       required: false,
     },
   },
-  category:{
-    type:String,
-    enum:[
-    "Iconic Cities",
-    "Castles",
-    "Amazing Pools",
-    "Camping",
-    "Farm",
-    "Arctic"
+
+  category: {
+    type: String,
+    enum: [
+      "Iconic Cities",
+      "Castles",
+      "Amazing Pools",
+      "Camping",
+      "Farm",
+      "Arctic"
     ]
   },
 
@@ -55,10 +59,10 @@ const listingSchema = new Schema({
   ],
 });
 
-// 🔥 REQUIRED FOR MAP & GEO QUERIES
+// 🌍 GEO INDEX
 listingSchema.index({ geometry: "2dsphere" });
 
-// ================= CASCADE DELETE REVIEWS =================
+// 🗑 CASCADE DELETE REVIEWS
 listingSchema.post("findOneAndDelete", async function (listing) {
   if (listing) {
     await Review.deleteMany({ _id: { $in: listing.reviews } });

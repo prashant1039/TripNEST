@@ -11,7 +11,6 @@
   border-bottom: 1px solid #eee;
 }
 
-/* Horizontal filters */
 .filters-scroll {
   display: flex;
   gap: 2.2rem;
@@ -24,7 +23,6 @@
   display: none;
 }
 
-/* Filter item */
 .filter {
   display: flex;
   flex-direction: column;
@@ -56,7 +54,7 @@
 /* ================= FILTER BUTTON ================= */
 
 .filter-btn {
-  display: none; /* controlled by JS */
+  display: none;
   align-items: center;
   gap: 0.4rem;
   border: 1px solid #ddd;
@@ -81,7 +79,6 @@
   background: #fff;
 }
 
-/* Switch */
 .switch {
   position: relative;
   width: 36px;
@@ -139,9 +136,7 @@
 
 <div class="filters-wrapper">
 
-  <!-- FILTER LIST -->
   <div class="filters-scroll">
-
     <a href="/listings" class="filter" data-category="All">
       <i class="fa-solid fa-border-all"></i>
       <span>All</span>
@@ -162,44 +157,36 @@
       <span>Iconic Cities</span>
     </a>
 
-    <a href="/listings?category=Castles" class="filter" data-category="Castles">
+    <a href="/listings?category=Castles" class="filter">
       <i class="fa-solid fa-chess-rook"></i>
       <span>Castles</span>
     </a>
 
-    <a href="/listings?category=Amazing Pools" class="filter" data-category="Amazing Pools">
+    <a href="/listings?category=Amazing Pools" class="filter">
       <i class="fa-solid fa-person-swimming"></i>
       <span>Pools</span>
     </a>
 
-    <a href="/listings?category=Camping" class="filter" data-category="Camping">
+    <a href="/listings?category=Camping" class="filter">
       <i class="fa-solid fa-campground"></i>
       <span>Camping</span>
     </a>
 
-    <a href="/listings?category=Farm" class="filter" data-category="Farm">
+    <a href="/listings?category=Farm" class="filter">
       <i class="fa-solid fa-tractor"></i>
       <span>Farms</span>
     </a>
 
-    <a href="/listings?category=Arctic" class="filter" data-category="Arctic">
+    <a href="/listings?category=Arctic" class="filter">
       <i class="fa-solid fa-snowflake"></i>
       <span>Arctic</span>
     </a>
-    
   </div>
 
-  <!-- FILTER BUTTON -->
-  <button
-    id="filterBtn"
-    class="filter-btn"
-    data-bs-toggle="offcanvas"
-    data-bs-target="#mobileFilters">
-    <i class="fa-solid fa-sliders"></i>
-    Filters
+  <button id="filterBtn" class="filter-btn" data-bs-toggle="offcanvas" data-bs-target="#mobileFilters">
+    <i class="fa-solid fa-sliders"></i> Filters
   </button>
 
-  <!-- TAX TOGGLE -->
   <div class="tax-pill">
     <span>Display total after taxes</span>
     <label class="switch">
@@ -210,31 +197,6 @@
 
 </div>
 
-<!-- ================= OFFCANVAS FILTERS ================= -->
-
-<div class="offcanvas offcanvas-bottom" tabindex="-1" id="mobileFilters">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title">Filters</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-  </div>
-
-  <div class="offcanvas-body">
-    <div class="row row-cols-2 g-3 text-center">
-
-      <a href="/listings" class="filter">All</a>
-      <a href="/listings?category=Trending" class="filter">Trending</a>
-      <a href="/listings?category=Room" class="filter">Rooms</a>
-      <a href="/listings?category=Iconic Cities" class="filter">Iconic Cities</a>
-      <a href="/listings?category=Castles" class="filter">Castles</a>
-      <a href="/listings?category=Amazing Pools" class="filter">Amazing Pools</a>
-      <a href="/listings?category=Camping" class="filter">Camping</a>
-      <a href="/listings?category=Farm" class="filter">Farms</a>
-      <a href="/listings?category=Arctic" class="filter">Arctic</a>
-
-    </div>
-  </div>
-</div>
-
 <!-- ================= LISTINGS ================= -->
 
 <div class="row row-cols-lg-3 row-cols-md-3 row-cols-sm-1 mt-4">
@@ -243,10 +205,13 @@
     <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
       <div class="card mb-4">
 
+        <!-- ✅ FIXED IMAGE -->
         <img
-          src="<%= listing.image?.url || listing.image %>"
+          src="<%= (listing.image && listing.image.length > 0) 
+                  ? listing.image[0].url 
+                  : 'https://via.placeholder.com/300' %>"
           class="card-img-top"
-          style="height:200px; object-fit:cover;"
+          style="height:200px; object-fit:contain; background:#f5f5f5;"
         />
 
         <div class="card-body">
@@ -267,50 +232,47 @@
 <!-- ================= SCRIPT ================= -->
 
 <script>
-  /* TAX TOGGLE */
-  const taxSwitch = document.getElementById("taxSwitch");
-  const prices = document.querySelectorAll(".price");
-  const TAX_RATE = 0.18;
+const taxSwitch = document.getElementById("taxSwitch");
+const prices = document.querySelectorAll(".price");
+const TAX_RATE = 0.18;
 
-  taxSwitch.addEventListener("change", () => {
-    prices.forEach(p => {
-      const base = Number(p.dataset.basePrice);
-      p.innerText = taxSwitch.checked
-        ? `₹ ${(base + base * TAX_RATE).toLocaleString("en-IN")} (incl. tax)`
-        : `₹ ${base.toLocaleString("en-IN")}`;
-    });
+taxSwitch.addEventListener("change", () => {
+  prices.forEach(p => {
+    const base = Number(p.dataset.basePrice);
+    p.innerText = taxSwitch.checked
+      ? `₹ ${(base + base * TAX_RATE).toLocaleString("en-IN")} (incl. tax)`
+      : `₹ ${base.toLocaleString("en-IN")}`;
   });
+});
 
-  /* ACTIVE FILTER */
-  const filters = document.querySelectorAll(".filter");
-  const saved = localStorage.getItem("activeCategory");
+const filters = document.querySelectorAll(".filter");
+const saved = localStorage.getItem("activeCategory");
 
-  filters.forEach(filter => {
-    if (filter.dataset.category === saved) {
-      filter.classList.add("active");
-    }
-    filter.addEventListener("click", () => {
-      localStorage.setItem("activeCategory", filter.dataset.category);
-    });
-  });
-
-  /* FILTER BUTTON OVERFLOW LOGIC */
-  const filtersScroll = document.querySelector(".filters-scroll");
-  const filterBtn = document.getElementById("filterBtn");
-
-  function checkFilterOverflow() {
-    if (!filtersScroll) return;
-
-    const isOverflowing =
-      filtersScroll.scrollWidth > filtersScroll.clientWidth;
-
-    if (isOverflowing || window.innerWidth <= 768) {
-      filterBtn.style.display = "inline-flex";
-    } else {
-      filterBtn.style.display = "none";
-    }
+filters.forEach(filter => {
+  if (filter.dataset.category === saved) {
+    filter.classList.add("active");
   }
+  filter.addEventListener("click", () => {
+    localStorage.setItem("activeCategory", filter.dataset.category);
+  });
+});
 
-  window.addEventListener("load", checkFilterOverflow);
-  window.addEventListener("resize", checkFilterOverflow);
+const filtersScroll = document.querySelector(".filters-scroll");
+const filterBtn = document.getElementById("filterBtn");
+
+function checkFilterOverflow() {
+  if (!filtersScroll) return;
+
+  const isOverflowing =
+    filtersScroll.scrollWidth > filtersScroll.clientWidth;
+
+  if (isOverflowing || window.innerWidth <= 768) {
+    filterBtn.style.display = "inline-flex";
+  } else {
+    filterBtn.style.display = "none";
+  }
+}
+
+window.addEventListener("load", checkFilterOverflow);
+window.addEventListener("resize", checkFilterOverflow);
 </script>

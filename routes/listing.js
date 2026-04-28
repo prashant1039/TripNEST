@@ -27,7 +27,10 @@ router
   .get(wrapAsync(listingcontroller.index))
   .post(
     isLoggedIn,
-    upload.single("listing[image]"), 
+
+    // 🔥 MULTIPLE IMAGES
+    upload.array("image", 5),
+
     validateListing,
     wrapAsync(listingcontroller.createListing)
   );
@@ -52,7 +55,10 @@ router
   .put(
     isLoggedIn,
     isOwner,
-    upload.single("listing[image]"), 
+
+    // 🔥 MULTIPLE IMAGES
+    upload.array("image", 5),
+
     validateListing,
     wrapAsync(listingcontroller.updateListing)
   )

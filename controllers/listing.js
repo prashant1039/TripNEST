@@ -25,9 +25,7 @@ module.exports.index = async (req, res) => {
 
   const alllistings = await Listing.find(filter);
 
-  res.render("listings/index.ejs", {
-    alllistings
-  });
+  res.render("listings/index.ejs", { alllistings });
 };
 
 // ================= NEW FORM =================
@@ -42,10 +40,7 @@ module.exports.showListing = async (req, res) => {
   const listing = await Listing.findById(id)
     .populate({
       path: "reviews",
-      populate: {
-        path: "author",
-        select: "username",
-      },
+      populate: { path: "author", select: "username" },
     })
     .populate("owner");
 
@@ -71,7 +66,7 @@ module.exports.createListing = async (req, res) => {
     .send();
 
   if (!geoData.body.features.length) {
-    req.flash("error", "Invalid location. Please try again.");
+    req.flash("error", "Invalid location");
     return res.redirect("/listings/new");
   }
 
@@ -79,11 +74,12 @@ module.exports.createListing = async (req, res) => {
   newListing.owner = req.user._id;
   newListing.geometry = geoData.body.features[0].geometry;
 
-  if (req.file) {
-    newListing.image = {
-      url: req.file.path,
-      filename: req.file.filename,
-    };
+  // 🖼 MULTIPLE IMAGES
+  if (req.files && req.files.length > 0) {
+    newListing.image = req.files.map(file => ({
+      url: file.path,
+      filename: file.filename,
+    }));
   }
 
   await newListing.save();
@@ -94,8 +90,7 @@ module.exports.createListing = async (req, res) => {
 
 // ================= EDIT FORM =================
 module.exports.renderEditForm = async (req, res) => {
-  const { id } = req.params;
-  const listing = await Listing.findById(id);
+  const listing = await Listing.findById(req.params.id);
 
   if (!listing) {
     throw new ExpressError(404, "Listing not found");
@@ -118,11 +113,14 @@ module.exports.updateListing = async (req, res) => {
     throw new ExpressError(404, "Listing not found");
   }
 
-  if (req.file) {
-    listing.image = {
-      url: req.file.path,
-      filename: req.file.filename,
-    };
+  // 🖼 ADD NEW IMAGES (keep old ones)
+  if (req.files && req.files.length > 0) {
+    const newImages = req.files.map(file => ({
+      url: file.path,
+      filename: file.filename,
+    }));
+
+    listing.image.push(...newImages);
     await listing.save();
   }
 
@@ -132,8 +130,8 @@ module.exports.updateListing = async (req, res) => {
 
 // ================= DELETE =================
 module.exports.deleteListing = async (req, res) => {
-  const { id } = req.params;
-  await Listing.findByIdAndDelete(id);
+  await Listing.findByIdAndDelete(req.params.id);
+
   req.flash("success", "Listing deleted!");
   res.redirect("/listings");
 };
