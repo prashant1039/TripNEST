@@ -31,6 +31,8 @@
   box-shadow: 0 6px 20px rgba(0,0,0,0.12);
   display: none;
   z-index: 1000;
+  max-height: 220px;
+  overflow-y: auto;
 }
 
 .search-dropdown.active {
@@ -57,6 +59,7 @@
 <nav class="navbar navbar-expand-md bg-white border-bottom sticky-top">
   <div class="container-fluid">
 
+    <!-- BRAND -->
     <a class="navbar-brand" href="/listings">
       <i class="fa-solid fa-bed fs-4"></i>
     </a>
@@ -67,17 +70,15 @@
 
     <div class="collapse navbar-collapse" id="navbarNav">
 
+      <!-- LEFT NAV -->
       <div class="navbar-nav">
         <a class="nav-link" href="/listings">Explore</a>
       </div>
 
       <!-- SEARCH -->
       <div class="navbar-nav ms-auto me-3">
-        <form
-          class="search-form"
-          id="searchForm"
-          action="/listings"
-          method="GET">
+
+        <form class="search-form" id="searchForm" action="/listings" method="GET">
 
           <input
             class="form-control search-inp"
@@ -93,6 +94,7 @@
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
 
+          <!-- DROPDOWN -->
           <div class="search-dropdown" id="searchDropdown">
             <div class="search-item">Delhi</div>
             <div class="search-item">Mumbai</div>
@@ -100,11 +102,16 @@
             <div class="search-item">Goa</div>
             <div class="search-item">Manali</div>
           </div>
+
         </form>
       </div>
 
+      <!-- RIGHT NAV -->
       <div class="navbar-nav">
-        <a class="nav-link" href="/listings/new">TripNest your Home</a>
+
+        <a class="nav-link" href="/listings/new">
+          TripNest your Home
+        </a>
 
         <% if(!currentUser) { %>
           <a class="nav-link fw-semibold" href="/signup">Signup</a>
@@ -112,8 +119,10 @@
         <% } %>
 
         <% if(currentUser) { %>
+          <a class="nav-link fw-semibold" href="/bookings">My Bookings</a>
           <a class="nav-link fw-semibold" href="/logout">Logout</a>
         <% } %>
+
       </div>
 
     </div>
@@ -128,33 +137,48 @@ const form = document.getElementById("searchForm");
 
 let debounceTimer;
 
-// Auto search when typing
-input.addEventListener("input", () => {
+// ================= SHOW DROPDOWN =================
+input.addEventListener("focus", () => {
   dropdown.classList.add("active");
-  clearTimeout(debounceTimer);
-
-  debounceTimer = setTimeout(() => {
-    const query = input.value.trim();
-    if (query === "") {
-      window.location.href = "/listings";
-    } else {
-      window.location.href = `/listings?q=${encodeURIComponent(query)}`;
-    }
-  }, 400);
 });
 
-// Dropdown click
+// ================= INPUT (NO AUTO REDIRECT BUG FIXED) =================
+input.addEventListener("input", () => {
+  clearTimeout(debounceTimer);
+
+  dropdown.classList.add("active");
+
+  debounceTimer = setTimeout(() => {
+    // no auto redirect (fix UX issue)
+  }, 300);
+});
+
+// ================= ENTER KEY SEARCH =================
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+
+    const query = input.value.trim();
+
+    window.location.href = query
+      ? `/listings?q=${encodeURIComponent(query)}`
+      : "/listings";
+  }
+});
+
+// ================= CLICK SUGGESTIONS =================
 items.forEach(item => {
   item.addEventListener("click", () => {
-    input.value = item.innerText;
-    dropdown.classList.remove("active");
-    window.location.href = `/listings?q=${encodeURIComponent(input.value)}`;
+    const value = item.innerText;
+    input.value = value;
+
+    window.location.href = `/listings?q=${encodeURIComponent(value)}`;
   });
 });
 
-// Click outside
-document.addEventListener("click", e => {
-  if (!form.contains(e.target)) {
+// ================= CLOSE DROPDOWN ON OUTSIDE CLICK =================
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".search-form")) {
     dropdown.classList.remove("active");
   }
 });

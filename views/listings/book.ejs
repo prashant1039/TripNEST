@@ -1,0 +1,65 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="container mt-4">
+
+  <h2>Book: <%= listing.title %></h2>
+
+  <p><strong>Price:</strong> ₹ <%= listing.price %></p>
+
+  <form action="/listings/<%= listing._id %>/book" method="POST">
+
+    <!-- ================= NAME ================= -->
+    <div class="mb-3">
+      <label class="form-label">Full Name</label>
+      <input type="text" name="booking[name]" class="form-control" required>
+    </div>
+
+    <!-- ================= PHONE ================= -->
+    <div class="mb-3">
+      <label class="form-label">Phone Number</label>
+      <input type="tel" name="booking[phone]" class="form-control" required>
+    </div>
+
+    <!-- ================= DATE ================= -->
+    <div class="mb-3">
+      <label class="form-label">Select Date</label>
+      <input type="date" name="booking[date]" class="form-control" required>
+    </div>
+
+    <!-- ================= GUESTS ================= -->
+    <div class="mb-3">
+      <label class="form-label">Number of Guests</label>
+      <input type="number" name="booking[guests]" min="1" class="form-control" required>
+    </div>
+
+    <!-- ================= CHILDREN ================= -->
+    <div class="mb-3">
+      <label class="form-label">Number of Children</label>
+      <input type="number" name="booking[children]" min="0" class="form-control" value="0">
+    </div>
+
+    <!-- ================= PAYMENT METHOD ================= -->
+    <div class="mb-3">
+      <label class="form-label">Payment Method</label>
+
+      <select name="booking[paymentMethod]" class="form-control" required>
+        <option value="">Select Payment Method</option>
+        <option value="UPI">UPI</option>
+        <option value="Cash">Cash</option>
+      </select>
+    </div>
+
+    <!-- ================= SPECIAL REQUEST ================= -->
+    <div class="mb-3">
+      <label class="form-label">Special Requests</label>
+      <textarea name="booking[notes]" class="form-control"></textarea>
+    </div>
+
+    <!-- ================= SUBMIT ================= -->
+    <button class="btn btn-success w-100">
+      Confirm Booking
+    </button>
+
+  </form>
+
+</div>

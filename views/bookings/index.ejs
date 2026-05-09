@@ -1,0 +1,64 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="container mt-4">
+
+  <h2>My Bookings</h2>
+
+  <% if (bookings.length === 0) { %>
+    <p class="text-muted">No bookings yet.</p>
+  <% } %>
+
+  <div class="row mt-3">
+
+    <% bookings.forEach(b => { %>
+
+      <div class="col-md-6 mb-3">
+
+        <div class="card shadow-sm">
+
+          <div class="card-body">
+
+            <h5>
+              <%= b.listing.title %>
+            </h5>
+
+            <p>
+              <strong>Date:</strong>
+              <%= b.date.toDateString() %>
+            </p>
+
+            <p>
+              <strong>Name:</strong>
+              <%= b.name %>
+            </p>
+
+            <p>
+              <strong>Phone:</strong>
+              <%= b.phone %>
+            </p>
+
+            <p>
+              <strong>Guests:</strong>
+              <%= b.children %>
+            </p>
+
+            <p>
+              <strong>Payment:</strong>
+              <%= b.paymentMethod %>
+            </p>
+
+            <a href="/listings/<%= b.listing._id %>" class="btn btn-primary btn-sm">
+              View Listing
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    <% }) %>
+
+  </div>
+
+</div>

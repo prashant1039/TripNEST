@@ -2,60 +2,56 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
+const dns = require("dns");
+dns.setDefaultResultOrder("ipv4first");
+
 const express = require("express");
 const app = express();
+
 const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsmate = require("ejs-mate");
+
 const ExpressError = require("./utils/ExpressError.js");
+
+// ================= ROUTES =================
 const listingsRouter = require("./routes/listing.js");
 const reviewsRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
-const MongoStore = require('connect-mongo').default;
-const session = require("express-session");
-const flash = require("connect-flash");
-const passport = require("passport");
-const LocalStrategy = require("passport-local");
-const User = require("./models/user.js");
+const bookingRouter = require("./routes/booking.js"); // ✅ IMPORTANT
 
-// ================== VIEW ENGINE ==================
+// ================= VIEW ENGINE =================
 app.set("view engine", "ejs");
 app.engine("ejs", ejsmate);
 app.set("views", path.join(__dirname, "views"));
 
-// ================== MIDDLEWARE ==================
+// ================= MIDDLEWARE =================
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
-// ================== DATABASE ==================
-const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(process.env.DB_URL);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error("MongoDB connection failed:", error.message);
-    process.exit(1);
-  }
-};
+// ================= DATABASE =================
+mongoose.connect(process.env.DB_URL)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log("DB Error:", err));
 
-connectDB();
-//======================== SESSION MONGO CONFIG ============
+// ================= SESSION =================
+const MongoStore = require("connect-mongo").default;
+const session = require("express-session");
+const flash = require("connect-flash");
+
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js");
 
 const store = MongoStore.create({
   mongoUrl: process.env.DB_URL,
-  crypto: {
-    secret: process.env.SECRET,
-  },
+  crypto: { secret: process.env.SECRET },
   touchAfter: 24 * 3600,
 });
 
-// ================== SESSION CONFIG ==================
-
-const sessionOption = {
+app.use(session({
   store,
   secret: process.env.SECRET,
   resave: false,
@@ -65,12 +61,11 @@ const sessionOption = {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
   },
-};
+}));
 
-app.use(session(sessionOption));
 app.use(flash());
 
-// ================== PASSPORT CONFIG ==================
+// ================= PASSPORT =================
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -78,32 +73,37 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// ================== GLOBAL TEMPLATE VARIABLES  ==================
+// ================= GLOBAL =================
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currentUser = req.user;
-  res.locals.q = req.query.q || "";   
+  res.locals.q = req.query.q || "";
   next();
 });
 
-// ================== PROJECT ROUTES ==================
+// ================= ROUTES =================
 app.use("/listings", listingsRouter);
-app.use("/listings/:id/reviews", reviewsRouter);
+app.use("/listings", reviewsRouter);
 app.use("/", userRouter);
 
-// ================== ERROR HANDLING ==================
+// ✅ BOOKING ROUTES (FIXED)
+app.use("/bookings", bookingRouter);
+app.use("/listings", bookingRouter); // for /listings/:id/book
+
+// ================= 404 =================
 app.use((req, res, next) => {
   next(new ExpressError(404, "Page Not Found!"));
 });
 
+// ================= ERROR HANDLER =================
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Something went wrong";
   res.status(statusCode).render("listings/error", { message });
 });
 
-// ================== SERVER ==================
+// ================= SERVER =================
 app.listen(8080, () => {
   console.log("Server running on port 8080");
 });

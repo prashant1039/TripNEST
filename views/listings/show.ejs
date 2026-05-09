@@ -1,13 +1,17 @@
 <% layout("/layouts/boilerplate") -%>
 
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/starability@2.4.2/starability-slot.min.css"
+/>
+
+<!-- ================= STYLES ================= -->
 <style>
   #map {
     height: 400px;
     width: 100%;
     border-radius: 12px;
   }
-
-  /* ================= IMAGE CONTAINER ================= */
 
   .image-container {
     width: 100%;
@@ -21,139 +25,198 @@
     background: #f5f5f5;
   }
 
-  /* 🔥 BLUR BACKGROUND FIX */
   .image-container::before {
     content: "";
     position: absolute;
     inset: 0;
-
     background-image: var(--bg);
     background-size: cover;
     background-position: center;
-
     filter: blur(25px);
     transform: scale(1.2);
     z-index: 0;
     opacity: 0.6;
   }
 
-  /* MAIN IMAGE */
   .listing-img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-
     position: relative;
     z-index: 1;
-
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
   }
 
+  .card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+
+  .card-body {
+    background: #fff;
+    border-radius: 14px;
+  }
+
+  .starability-slot,
+  .starability-result {
+    min-height: 0;
+  }
+
   @media (max-width: 768px) {
-    .image-container {
-      height: 300px;
-    }
+    .image-container { height: 300px; }
+    #map { height: 300px; }
   }
 </style>
 
+<!-- ================= DATA ================= -->
 <script>
   const mapToken = "<%= mapToken %>";
+  const listing = <%- JSON.stringify(listing) %>;
 </script>
 
 <div class="container mt-4">
 
-  <!-- ================= TITLE ================= -->
-
-  <h3 class="mb-1"><%= listing.title %></h3>
+  <!-- TITLE -->
+  <h3><%= listing.title %></h3>
 
   <p class="text-muted">
     Hosted by <strong><%= listing.owner.username %></strong>
   </p>
 
-  <!-- ================= IMAGE ================= -->
-
+  <!-- IMAGE -->
   <% if (listing.image && listing.image.length > 0) { %>
-
-    <div class="image-container" 
-         style="--bg:url('<%= listing.image[0].url %>')">
-
-      <img 
-        src="<%= listing.image[0].url %>" 
-        class="listing-img"
-      >
-
+    <div class="image-container" style="--bg:url('<%= listing.image[0].url %>')">
+      <img src="<%= listing.image[0].url %>" class="listing-img">
     </div>
-
   <% } else { %>
-    <p class="text-muted">No image available</p>
+    <p>No image available</p>
   <% } %>
 
-  <!-- ================= DETAILS ================= -->
+  <!-- DETAILS -->
+  <ul class="list-group mt-4">
 
-  <ul class="list-group mb-3 shadow-sm mt-4">
-    <li class="list-group-item"><strong>Description:</strong> <%= listing.description %></li>
     <li class="list-group-item">
-      <strong>Price:</strong> ₹ <%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %>
+      <strong>Description:</strong> <%= listing.description %>
     </li>
-    <li class="list-group-item"><strong>Location:</strong> <%= listing.location %></li>
-    <li class="list-group-item"><strong>Country:</strong> <%= listing.country %></li>
+
+    <li class="list-group-item">
+      <strong>Price:</strong>
+      ₹ <%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %>
+    </li>
+
+    <li class="list-group-item">
+      <strong>Location:</strong> <%= listing.location %>
+    </li>
+
+    <li class="list-group-item">
+      <strong>Country:</strong> <%= listing.country %>
+    </li>
+
   </ul>
 
-  <!-- ================= OWNER ================= -->
-
+  <!-- OWNER BUTTONS -->
   <% if (currentUser && listing.owner._id.equals(currentUser._id)) { %>
-    <a href="/listings/<%= listing._id %>/edit" class="btn btn-warning me-2">Edit</a>
+    <div class="mt-3 d-flex gap-2">
 
-    <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" class="d-inline">
-      <button class="btn btn-danger">Delete</button>
-    </form>
+      <a href="/listings/<%= listing._id %>/edit" class="btn btn-warning">
+        Edit
+      </a>
+
+      <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+        <button class="btn btn-danger">Delete</button>
+      </form>
+
+    </div>
   <% } %>
 
-  <hr class="my-4">
+  <!-- BOOK BUTTON -->
+  <% if (currentUser && !listing.owner._id.equals(currentUser._id)) { %>
+    <div class="mt-3">
+      <a href="/listings/<%= listing._id %>/book" class="btn btn-primary w-100 btn-lg">
+        Book Now
+      </a>
+    </div>
+  <% } %>
 
-  <!-- ================= REVIEW FORM ================= -->
+  <hr>
 
+  <!-- REVIEW FORM -->
   <% if (currentUser) { %>
+
     <h4>Add a Review</h4>
 
-    <form action="/listings/<%= listing._id %>/reviews" method="POST" class="mb-4">
+    <form action="/listings/<%= listing._id %>/reviews" method="POST">
 
-      <textarea name="review[comment]" class="form-control mb-2" required></textarea>
+      <fieldset class="starability-slot">
 
-      <button class="btn btn-success">Submit</button>
+        <input type="radio" name="review[rating]" value="1" id="r1">
+        <label for="r1">1 star</label>
+
+        <input type="radio" name="review[rating]" value="2" id="r2">
+        <label for="r2">2 stars</label>
+
+        <input type="radio" name="review[rating]" value="3" id="r3">
+        <label for="r3">3 stars</label>
+
+        <input type="radio" name="review[rating]" value="4" id="r4">
+        <label for="r4">4 stars</label>
+
+        <input type="radio" name="review[rating]" value="5" id="r5">
+        <label for="r5">5 stars</label>
+
+      </fieldset>
+
+      <textarea name="review[comment]" class="form-control mt-3" required></textarea>
+
+      <button class="btn btn-success mt-3">Submit Review</button>
+
     </form>
+
   <% } %>
 
-  <!-- ================= REVIEWS ================= -->
+  <!-- REVIEWS -->
+  <h4 class="mt-4">All Reviews</h4>
 
-  <h4>All Reviews</h4>
+  <% if (listing.reviews && listing.reviews.length > 0) { %>
 
-  <% listing.reviews.forEach(review => { %>
-    <div class="card mb-2">
-      <div class="card-body">
-        <strong><%= review.author.username %></strong>
-        <p><%= review.comment %></p>
+    <% listing.reviews.forEach(review => { %>
+
+      <div class="card mb-3">
+        <div class="card-body">
+
+          <strong><%= review.author.username %></strong>
+
+          <fieldset class="starability-result" data-rating="<%= review.rating %>">
+            Rated: <%= review.rating %> stars
+          </fieldset>
+
+          <p><%= review.comment %></p>
+
+        </div>
       </div>
-    </div>
-  <% }) %>
 
-  <!-- ================= MAP ================= -->
+    <% }) %>
 
-  <hr class="my-4">
+  <% } else { %>
 
+    <p class="text-muted">No reviews yet.</p>
+
+  <% } %>
+
+  <!-- MAP -->
   <h4>Where you'll be</h4>
   <div id="map"></div>
 
 </div>
 
-<!-- ================= MAP ================= -->
+<!-- ================= MAPBOX ================= -->
+<link
+  href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
+  rel="stylesheet"
+/>
 
-<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet"/>
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-
-<script>
-  const listing = <%- JSON.stringify(listing) %>;
-</script>
 
 <script src="/js/map.js"></script>
