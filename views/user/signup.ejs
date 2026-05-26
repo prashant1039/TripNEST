@@ -1,40 +1,172 @@
 <% layout("/layouts/boilerplate") -%>
 
-<div class="row">
-  <div class="col-8 offset-2">
-    <h3 class="mb-3">Sign Up</h3>
+<style>
+  body {
+    background: linear-gradient(135deg, #f5f7fa, #e4ecf7);
+  }
+
+  .signup-container {
+    min-height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .signup-card {
+    width: 100%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 35px;
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    animation: fadeUp 1s ease;
+  }
+
+  .signup-title {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #2d3436;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #2d3436;
+  }
+
+  .form-control {
+    border-radius: 14px;
+    padding: 12px;
+    border: 2px solid #dfe6e9;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #6c5ce7;
+    box-shadow: 0 0 12px rgba(108,92,231,0.2);
+    transform: scale(1.02);
+  }
+
+  /* Animated Button */
+  .animated-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    color: white;
+    background: linear-gradient(45deg, #ff9f43, #ee5253, #6c5ce7);
+    background-size: 300% 300%;
+    animation: gradientMove 5s ease infinite;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .animated-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .animated-btn:active {
+    transform: scale(0.96);
+  }
+
+  .animated-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.3);
+    transform: skewX(-25deg);
+    transition: 0.7s;
+  }
+
+  .animated-btn:hover::before {
+    left: 120%;
+  }
+
+  .invalid-feedback {
+    font-size: 0.9rem;
+  }
+
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<div class="signup-container">
+  <div class="signup-card">
+
+    <h2 class="signup-title">✨ Create Your Account</h2>
 
     <form action="/signup" method="POST" class="needs-validation" novalidate>
 
-      <!-- Username -->
       <div class="mb-3">
         <label class="form-label">Username</label>
-        <input type="text" name="user[username]" class="form-control" required minlength="3">
+        <input
+          type="text"
+          name="user[username]"
+          class="form-control"
+          required
+          minlength="3"
+          placeholder="Enter username"
+        >
         <div class="invalid-feedback">
           Username must be at least 3 characters.
         </div>
       </div>
 
-      <!-- Email -->
       <div class="mb-3">
         <label class="form-label">Email</label>
-        <input type="email" name="user[email]" class="form-control" required>
+        <input
+          type="email"
+          name="user[email]"
+          class="form-control"
+          required
+          placeholder="Enter email"
+        >
         <div class="invalid-feedback">
           Please enter a valid email address.
         </div>
       </div>
 
-      <!-- Password -->
-      <div class="mb-3">
+      <div class="mb-4">
         <label class="form-label">Password</label>
-        <input type="password" name="user[password]" class="form-control" required minlength="6">
+        <input
+          type="password"
+          name="user[password]"
+          class="form-control"
+          required
+          minlength="6"
+          placeholder="Enter password"
+        >
         <div class="invalid-feedback">
           Password must be at least 6 characters.
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary">Sign Up</button>
+      <button type="submit" class="animated-btn">
+        🚀 Sign Up
+      </button>
 
     </form>
+
   </div>
 </div>

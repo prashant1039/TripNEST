@@ -1,12 +1,140 @@
 <% layout("/layouts/boilerplate") -%>
 
-<div class="row">
-  <div class="col-8 offset-2">
-    <h3 class="mb-3">Sign in</h3>
+<style>
+  body {
+    background: linear-gradient(135deg, #f5f7fa, #e4ecf7);
+  }
+
+  .signin-container {
+    min-height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .signin-card {
+    width: 100%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 35px;
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    animation: fadeUp 1s ease;
+  }
+
+  .signin-title {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #2d3436;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #2d3436;
+  }
+
+  .form-control {
+    border-radius: 14px;
+    padding: 12px;
+    border: 2px solid #dfe6e9;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #6c5ce7;
+    box-shadow: 0 0 12px rgba(108,92,231,0.2);
+    transform: scale(1.02);
+  }
+
+  .animated-btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    color: white;
+    background: linear-gradient(45deg, #ff9f43, #ee5253, #6c5ce7);
+    background-size: 300% 300%;
+    animation: gradientMove 5s ease infinite;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .animated-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .animated-btn:active {
+    transform: scale(0.96);
+  }
+
+  .animated-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.3);
+    transform: skewX(-25deg);
+    transition: 0.7s;
+  }
+
+  .animated-btn:hover::before {
+    left: 120%;
+  }
+
+  .forgot-link {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #6c5ce7;
+    transition: 0.3s;
+  }
+
+  .forgot-link:hover {
+    color: #ee5253;
+    transform: scale(1.05);
+  }
+
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .signin-card {
+      padding: 25px;
+      margin: 15px;
+    }
+  }
+</style>
+
+<div class="signin-container">
+  <div class="signin-card">
+
+    <h2 class="signin-title">🔐 Welcome Back</h2>
 
     <form action="/login" method="POST">
 
-      <!-- Username -->
       <div class="mb-3">
         <label class="form-label">Username</label>
         <input
@@ -14,10 +142,10 @@
           name="username"
           class="form-control"
           required
+          placeholder="Enter your username"
         >
       </div>
 
-      <!-- Password -->
       <div class="mb-3">
         <label class="form-label">Password</label>
         <input
@@ -25,11 +153,19 @@
           name="password"
           class="form-control"
           required
+          placeholder="Enter your password"
         >
       </div>
 
-      <button type="submit" class="btn btn-primary">Sign in</button>
-      <a href="/forgot">Forgot Password?</a>
+      <button type="submit" class="animated-btn">
+        🚀 Sign In
+      </button>
+
+      <a href="/forgot" class="forgot-link">
+        Forgot Password?
+      </a>
+
     </form>
+
   </div>
 </div>
