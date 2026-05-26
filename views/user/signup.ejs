@@ -1,96 +1,173 @@
 <% layout("/layouts/boilerplate") -%>
 
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
+
   body {
-    background: linear-gradient(135deg, #f5f7fa, #e4ecf7);
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a, #1e293b, #312e81);
+    overflow: hidden;
+    position: relative;
+    cursor: none;
+  }
+
+  body::before,
+  body::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: 0;
+    animation: floatBlob 10s infinite alternate ease-in-out;
+  }
+
+  body::before {
+    width: 280px;
+    height: 280px;
+    background: #7c3aed;
+    top: 10%;
+    left: 10%;
+  }
+
+  body::after {
+    width: 320px;
+    height: 320px;
+    background: #ec4899;
+    bottom: 10%;
+    right: 10%;
+  }
+
+  @keyframes floatBlob {
+    from { transform: translate(0, 0); }
+    to { transform: translate(40px, -40px); }
+  }
+
+  .cursor-glow {
+    position: fixed;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: rgba(139, 92, 246, 0.8);
+    box-shadow: 0 0 35px #8b5cf6;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
   }
 
   .signup-container {
-    min-height: 85vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    perspective: 1200px;
+    position: relative;
+    z-index: 2;
   }
 
   .signup-card {
     width: 100%;
     max-width: 500px;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 35px;
-    border-radius: 24px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    padding: 40px;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    transform-style: preserve-3d;
+    transition: transform 0.15s ease;
     animation: fadeUp 1s ease;
   }
 
   .signup-title {
     text-align: center;
+    color: white;
+    font-size: 30px;
+    margin-bottom: 30px;
     font-weight: 700;
-    margin-bottom: 25px;
-    color: #2d3436;
   }
 
   .form-label {
-    font-weight: 600;
-    color: #2d3436;
+    color: #e2e8f0;
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .input-box {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .input-box i {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: #cbd5e1;
+    font-size: 18px;
+  }
+
+  .toggle-password {
+    left: auto !important;
+    right: 15px;
+    cursor: pointer;
   }
 
   .form-control {
-    border-radius: 14px;
-    padding: 12px;
-    border: 2px solid #dfe6e9;
-    transition: all 0.3s ease;
+    width: 100%;
+    padding: 14px 45px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    outline: none;
+    font-size: 15px;
+    transition: 0.3s ease;
+  }
+
+  .form-control::placeholder {
+    color: #94a3b8;
   }
 
   .form-control:focus {
-    border-color: #6c5ce7;
-    box-shadow: 0 0 12px rgba(108,92,231,0.2);
+    border-color: #8b5cf6;
+    box-shadow: 0 0 20px rgba(139,92,246,0.5);
     transform: scale(1.02);
   }
 
-  /* Animated Button */
   .animated-btn {
     width: 100%;
-    padding: 14px;
-    font-size: 18px;
-    font-weight: bold;
+    padding: 15px;
     border: none;
-    border-radius: 40px;
-    cursor: pointer;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 700;
     color: white;
-    background: linear-gradient(45deg, #ff9f43, #ee5253, #6c5ce7);
+    cursor: pointer;
+    background: linear-gradient(45deg, #7c3aed, #ec4899, #06b6d4);
     background-size: 300% 300%;
-    animation: gradientMove 5s ease infinite;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease;
+    animation: gradientMove 5s infinite ease;
+    box-shadow: 0 10px 30px rgba(124,58,237,0.4);
+    transition: 0.3s ease;
   }
 
   .animated-btn:hover {
-    transform: scale(1.05);
-  }
-
-  .animated-btn:active {
-    transform: scale(0.96);
-  }
-
-  .animated-btn::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -120%;
-    width: 100%;
-    height: 100%;
-    background: rgba(255,255,255,0.3);
-    transform: skewX(-25deg);
-    transition: 0.7s;
-  }
-
-  .animated-btn:hover::before {
-    left: 120%;
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(236,72,153,0.5);
   }
 
   .invalid-feedback {
-    font-size: 0.9rem;
+    color: #fca5a5;
+    font-size: 0.85rem;
+    margin-top: 6px;
   }
 
   @keyframes gradientMove {
@@ -102,14 +179,31 @@
   @keyframes fadeUp {
     from {
       opacity: 0;
-      transform: translateY(40px);
+      transform: translateY(50px);
     }
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
+
+  @media(max-width: 600px) {
+    body {
+      cursor: auto;
+    }
+
+    .cursor-glow {
+      display: none;
+    }
+
+    .signup-card {
+      margin: 20px;
+      padding: 28px;
+    }
+  }
 </style>
+
+<div class="cursor-glow"></div>
 
 <div class="signup-container">
   <div class="signup-card">
@@ -118,48 +212,50 @@
 
     <form action="/signup" method="POST" class="needs-validation" novalidate>
 
-      <div class="mb-3">
-        <label class="form-label">Username</label>
+      <label class="form-label">Username</label>
+      <div class="input-box">
+        <i class="fa fa-user"></i>
         <input
           type="text"
           name="user[username]"
           class="form-control"
           required
           minlength="3"
-          placeholder="Enter username"
-        >
-        <div class="invalid-feedback">
-          Username must be at least 3 characters.
-        </div>
+          placeholder="Enter username">
+      </div>
+      <div class="invalid-feedback">
+        Username must be at least 3 characters.
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Email</label>
+      <label class="form-label">Email</label>
+      <div class="input-box">
+        <i class="fa fa-envelope"></i>
         <input
           type="email"
           name="user[email]"
           class="form-control"
           required
-          placeholder="Enter email"
-        >
-        <div class="invalid-feedback">
-          Please enter a valid email address.
-        </div>
+          placeholder="Enter email">
+      </div>
+      <div class="invalid-feedback">
+        Please enter a valid email.
       </div>
 
-      <div class="mb-4">
-        <label class="form-label">Password</label>
+      <label class="form-label">Password</label>
+      <div class="input-box">
+        <i class="fa fa-lock"></i>
         <input
           type="password"
+          id="password"
           name="user[password]"
           class="form-control"
           required
           minlength="6"
-          placeholder="Enter password"
-        >
-        <div class="invalid-feedback">
-          Password must be at least 6 characters.
-        </div>
+          placeholder="Enter password">
+        <i class="fa fa-eye toggle-password" onclick="togglePassword()"></i>
+      </div>
+      <div class="invalid-feedback">
+        Password must be at least 6 characters.
       </div>
 
       <button type="submit" class="animated-btn">
@@ -170,3 +266,29 @@
 
   </div>
 </div>
+
+<script>
+  function togglePassword() {
+    const pass = document.getElementById("password");
+    pass.type = pass.type === "password" ? "text" : "password";
+  }
+
+  const cursor = document.querySelector(".cursor-glow");
+
+  document.addEventListener("mousemove", (e) => {
+    cursor.style.left = e.clientX + "px";
+    cursor.style.top = e.clientY + "px";
+  });
+
+  const card = document.querySelector(".signup-card");
+
+  document.addEventListener("mousemove", (e) => {
+    const x = (window.innerWidth / 2 - e.pageX) / 25;
+    const y = (window.innerHeight / 2 - e.pageY) / 25;
+    card.style.transform = `rotateY(${-x}deg) rotateX(${y}deg)`;
+  });
+
+  document.addEventListener("mouseleave", () => {
+    card.style.transform = "rotateY(0deg) rotateX(0deg)";
+  });
+</script>

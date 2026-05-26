@@ -1,83 +1,124 @@
 <style>
-.search-form {
-  position: relative;
-  width: 280px;
-}
-
-.search-inp {
-  border-radius: 999px;
-  padding: 0.55rem 3rem 0.55rem 1.2rem;
-  border: 1px solid #ddd;
-}
-
-.search-btn {
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: blue;
-  color: #fff;
-  border-radius: 999px;
-  border: none;
-  padding: 0.35rem 0.75rem;
-}
-
-.search-dropdown {
-  position: absolute;
-  top: 110%;
-  width: 100%;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-  display: none;
-  z-index: 1000;
-  max-height: 220px;
-  overflow-y: auto;
-}
-
-.search-dropdown.active {
-  display: block;
-}
-
-.search-item {
-  padding: 0.65rem 1rem;
-  cursor: pointer;
-}
-
-.search-item:hover {
-  background: #f7f7f7;
-}
-
-@media (max-width: 768px) {
-  .search-form {
-    width: 100%;
-    margin: 0.75rem 0;
+  .navbar {
+    backdrop-filter: blur(14px);
+    background: rgba(255, 255, 255, 0.92) !important;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    font-family: "Plus Jakarta Sans", sans-serif;
   }
-}
+
+  .navbar-brand {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #4f46e5 !important;
+    transition: 0.3s;
+  }
+
+  .navbar-brand:hover {
+    transform: scale(1.05);
+    color: #ec4899 !important;
+  }
+
+  .nav-link {
+    font-weight: 600;
+    color: #334155 !important;
+    transition: 0.3s;
+  }
+
+  .nav-link:hover {
+    color: #6366f1 !important;
+  }
+
+  .search-form {
+    position: relative;
+    width: 340px;
+  }
+
+  .search-inp {
+    border-radius: 999px;
+    padding: 0.7rem 3.2rem 0.7rem 1.3rem;
+    border: 1px solid #e5e7eb;
+    background: #f8fafc;
+    transition: 0.3s;
+  }
+
+  .search-inp:focus {
+    background: white;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99,102,241,0.15);
+  }
+
+  .search-btn {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    border-radius: 999px;
+    padding: 0.45rem 0.9rem;
+    color: white;
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+  }
+
+  .search-dropdown {
+    position: absolute;
+    top: 115%;
+    width: 100%;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+    display: none;
+    z-index: 1000;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 8px;
+  }
+
+  .search-dropdown.active {
+    display: block;
+  }
+
+  .search-item {
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: 0.2s;
+  }
+
+  .search-item:hover {
+    background: #f1f5f9;
+    color: #4f46e5;
+  }
+
+  @media (max-width: 768px) {
+    .search-form {
+      width: 100%;
+      margin: 0.8rem 0;
+    }
+  }
 </style>
 
-<nav class="navbar navbar-expand-md bg-white border-bottom sticky-top">
+<nav class="navbar navbar-expand-md sticky-top border-bottom">
   <div class="container-fluid">
 
-    <!-- BRAND -->
     <a class="navbar-brand" href="/listings">
-      <i class="fa-solid fa-bed fs-4"></i>
+      <i class="fa-solid fa-bed me-2"></i>TripNest
     </a>
 
-    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
 
-      <!-- LEFT NAV -->
       <div class="navbar-nav">
         <a class="nav-link" href="/listings">Explore</a>
       </div>
 
-      <!-- SEARCH -->
       <div class="navbar-nav ms-auto me-3">
-
         <form class="search-form" id="searchForm" action="/listings" method="GET">
 
           <input
@@ -85,28 +126,27 @@
             id="searchInput"
             name="q"
             type="search"
-            placeholder="Search destinations"
+            placeholder="Search destinations..."
             autocomplete="off"
-            value="<%= q %>"
-          />
+            value="<%= typeof q !== 'undefined' ? q : '' %>"
+          >
 
           <button class="search-btn" type="submit">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
 
-          <!-- DROPDOWN -->
           <div class="search-dropdown" id="searchDropdown">
             <div class="search-item">Delhi</div>
             <div class="search-item">Mumbai</div>
-            <div class="search-item">Bangalore</div>
             <div class="search-item">Goa</div>
             <div class="search-item">Manali</div>
+            <div class="search-item">Jaipur</div>
+            <div class="search-item">Udaipur</div>
           </div>
 
         </form>
       </div>
 
-      <!-- RIGHT NAV -->
       <div class="navbar-nav">
 
         <a class="nav-link" href="/listings/new">
@@ -114,13 +154,13 @@
         </a>
 
         <% if(!currentUser) { %>
-          <a class="nav-link fw-semibold" href="/signup">Signup</a>
-          <a class="nav-link fw-semibold" href="/login">Login</a>
+          <a class="nav-link" href="/signup">Signup</a>
+          <a class="nav-link" href="/login">Login</a>
         <% } %>
 
         <% if(currentUser) { %>
-          <a class="nav-link fw-semibold" href="/bookings">My Bookings</a>
-          <a class="nav-link fw-semibold" href="/logout">Logout</a>
+          <a class="nav-link" href="/bookings">My Bookings</a>
+          <a class="nav-link" href="/logout">Logout</a>
         <% } %>
 
       </div>
@@ -130,56 +170,37 @@
 </nav>
 
 <script>
-const input = document.getElementById("searchInput");
-const dropdown = document.getElementById("searchDropdown");
-const items = document.querySelectorAll(".search-item");
-const form = document.getElementById("searchForm");
+  const input = document.getElementById("searchInput");
+  const dropdown = document.getElementById("searchDropdown");
+  const items = document.querySelectorAll(".search-item");
 
-let debounceTimer;
+  if (input) {
+    input.addEventListener("focus", () => {
+      dropdown.classList.add("active");
+    });
 
-// ================= SHOW DROPDOWN =================
-input.addEventListener("focus", () => {
-  dropdown.classList.add("active");
-});
+    input.addEventListener("input", () => {
+      dropdown.classList.add("active");
 
-// ================= INPUT (NO AUTO REDIRECT BUG FIXED) =================
-input.addEventListener("input", () => {
-  clearTimeout(debounceTimer);
+      const filter = input.value.toLowerCase();
 
-  dropdown.classList.add("active");
+      items.forEach(item => {
+        const text = item.innerText.toLowerCase();
+        item.style.display = text.includes(filter) ? "block" : "none";
+      });
+    });
 
-  debounceTimer = setTimeout(() => {
-    // no auto redirect (fix UX issue)
-  }, 300);
-});
+    items.forEach(item => {
+      item.addEventListener("click", () => {
+        const value = item.innerText;
+        window.location.href = `/listings?q=${encodeURIComponent(value)}`;
+      });
+    });
 
-// ================= ENTER KEY SEARCH =================
-input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-
-    const query = input.value.trim();
-
-    window.location.href = query
-      ? `/listings?q=${encodeURIComponent(query)}`
-      : "/listings";
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".search-form")) {
+        dropdown.classList.remove("active");
+      }
+    });
   }
-});
-
-// ================= CLICK SUGGESTIONS =================
-items.forEach(item => {
-  item.addEventListener("click", () => {
-    const value = item.innerText;
-    input.value = value;
-
-    window.location.href = `/listings?q=${encodeURIComponent(value)}`;
-  });
-});
-
-// ================= CLOSE DROPDOWN ON OUTSIDE CLICK =================
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".search-form")) {
-    dropdown.classList.remove("active");
-  }
-});
 </script>
