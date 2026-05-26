@@ -4,174 +4,274 @@
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
 
 <style>
-  #map {
-    height: 400px;
-    width: 100%;
-    border-radius: 12px;
+  body {
+    background: #f8fafc;
   }
 
-  .image-container {
+  .show-wrapper {
+    padding: 32px 0;
+  }
+
+  .show-header {
+    margin-bottom: 18px;
+  }
+
+  .show-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .show-subtitle {
+    color: #64748b;
+    font-weight: 500;
+  }
+
+  .hero-image-box {
     width: 100%;
-    height: 500px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 16px;
+    height: 520px;
+    border-radius: 28px;
     overflow: hidden;
     position: relative;
-    background: #f5f5f5;
+    background: #e2e8f0;
+    box-shadow: 0 20px 50px rgba(15,23,42,0.16);
   }
 
-  .image-container::before {
+  .hero-image-box::before {
     content: "";
     position: absolute;
     inset: 0;
     background-image: var(--bg);
     background-size: cover;
     background-position: center;
-    filter: blur(25px);
-    transform: scale(1.2);
-    z-index: 0;
-    opacity: 0.6;
+    filter: blur(30px);
+    transform: scale(1.18);
+    opacity: 0.55;
   }
 
-  .listing-img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    position: relative;
-    z-index: 1;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  }
-
-  .card {
-    border: none;
-    border-radius: 14px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-  }
-
-  .card-body {
-    background: #fff;
-    border-radius: 14px;
-  }
-
-  .starability-slot,
-  .starability-result {
-    min-height: 0;
-  }
-
-  .action-buttons {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
-  }
-
-  .btn,
-  button,
-  .animated-btn {
-    position: relative;
-    overflow: hidden;
-    border: none !important;
-    border-radius: 40px !important;
-    font-weight: bold !important;
-    color: white !important;
-    text-decoration: none !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-    background-size: 300% 300% !important;
-    animation: gradientMove 5s ease infinite;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.22);
-    z-index: 1;
-  }
-
-  .animated-btn {
-    min-width: 165px;
-    padding: 12px 24px;
-    text-align: center;
-    cursor: pointer;
-  }
-
-  .btn:hover,
-  button:hover,
-  .animated-btn:hover {
-    transform: scale(1.07);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.35);
-  }
-
-  .btn:active,
-  button:active,
-  .animated-btn:active {
-    transform: scale(0.95);
-  }
-
-  .btn::before,
-  button::before,
-  .animated-btn::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -120%;
+  .hero-img {
     width: 100%;
     height: 100%;
-    background: rgba(255,255,255,0.32);
-    transform: skewX(-25deg);
-    transition: 0.7s;
-    z-index: -1;
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
   }
 
-  .btn:hover::before,
-  button:hover::before,
-  .animated-btn:hover::before {
-    left: 120%;
+  .floating-badge {
+    position: absolute;
+    left: 22px;
+    bottom: 22px;
+    z-index: 3;
+    background: rgba(15,23,42,0.82);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 700;
+    backdrop-filter: blur(10px);
   }
 
-  .book-btn,
-  .btn-primary {
-    background: linear-gradient(45deg, #ff9f43, #ee5253, #ff6b6b) !important;
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1.7fr 0.9fr;
+    gap: 28px;
+    margin-top: 30px;
   }
 
-  .explore-btn {
-    background: linear-gradient(45deg, #6c5ce7, #00cec9, #0984e3) !important;
+  .premium-card {
+    background: white;
+    border-radius: 24px;
+    padding: 26px;
+    box-shadow: 0 12px 35px rgba(15,23,42,0.08);
+    border: 1px solid #eef2f7;
   }
 
-  .btn-warning {
-    background: linear-gradient(45deg, #feca57, #ff9f43, #ffb142) !important;
+  .section-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 16px;
   }
 
-  .btn-danger {
-    background: linear-gradient(45deg, #ff4d4d, #ee5253, #ff6b81) !important;
+  .host-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
   }
 
-  .btn-success {
-    background: linear-gradient(45deg, #1dd1a1, #10ac84, #00d2d3) !important;
+  .host-avatar {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.25rem;
   }
 
-  .btn-info {
-    background: linear-gradient(45deg, #54a0ff, #2e86de, #00d2d3) !important;
+  .info-list {
+    display: grid;
+    gap: 14px;
+    margin-top: 18px;
   }
 
-  @keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  .info-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px;
+    border-radius: 18px;
+    background: #f8fafc;
   }
 
-  @media (max-width: 768px) {
-    .image-container {
-      height: 300px;
+  .info-item i {
+    color: #6366f1;
+    font-size: 1.2rem;
+    margin-top: 3px;
+  }
+
+  .booking-card {
+    position: sticky;
+    top: 100px;
+  }
+
+  .price-text {
+    font-size: 1.7rem;
+    font-weight: 900;
+    color: #0f172a;
+  }
+
+  .price-text span {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #64748b;
+  }
+
+  .animated-btn {
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    padding: 14px 22px;
+    border: none;
+    border-radius: 999px;
+    font-weight: 800;
+    color: white !important;
+    text-decoration: none;
+    background: linear-gradient(135deg, #ff385c, #e61e4d, #bd1e59);
+    box-shadow: 0 12px 28px rgba(230,30,77,0.32);
+    transition: 0.3s ease;
+  }
+
+  .animated-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 40px rgba(230,30,77,0.42);
+  }
+
+  .secondary-btn {
+    background: linear-gradient(135deg, #6366f1, #06b6d4);
+    box-shadow: 0 12px 28px rgba(99,102,241,0.28);
+  }
+
+  .owner-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .owner-actions .btn {
+    border-radius: 999px;
+    padding: 10px 22px;
+    font-weight: 700;
+  }
+
+  .nearby-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  .nearby-card {
+    text-decoration: none;
+    color: #0f172a;
+    padding: 18px;
+    border-radius: 20px;
+    background: #f8fafc;
+    transition: 0.3s ease;
+    display: block;
+  }
+
+  .nearby-card:hover {
+    transform: translateY(-4px);
+    background: linear-gradient(135deg, #eef2ff, #fdf2f8);
+    color: #4f46e5;
+  }
+
+  .nearby-card i {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    color: #ec4899;
+  }
+
+  .review-form textarea {
+    border-radius: 16px;
+    min-height: 110px;
+  }
+
+  .review-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid #eef2f7;
+    box-shadow: 0 8px 24px rgba(15,23,42,0.06);
+    margin-bottom: 16px;
+  }
+
+  .review-user {
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  #map {
+    height: 420px;
+    width: 100%;
+    border-radius: 24px;
+    box-shadow: 0 12px 35px rgba(15,23,42,0.1);
+  }
+
+  @media (max-width: 992px) {
+    .content-grid {
+      grid-template-columns: 1fr;
     }
 
-    #map {
-      height: 300px;
+    .booking-card {
+      position: static;
     }
 
-    .animated-btn {
-      min-width: 140px;
-      padding: 10px 18px;
-      font-size: 14px;
+    .hero-image-box {
+      height: 380px;
+    }
+
+    .nearby-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .show-title {
+      font-size: 1.45rem;
+    }
+
+    .hero-image-box {
+      height: 280px;
+      border-radius: 20px;
+    }
+
+    .premium-card {
+      padding: 20px;
     }
   }
 </style>
@@ -181,171 +281,235 @@
   const listing = <%- JSON.stringify(listing) %>;
 </script>
 
-<div class="container mt-4">
+<div class="show-wrapper">
 
-  <h3><%= listing.title %></h3>
-
-  <p class="text-muted">
-    Hosted by <strong><%= listing.owner.username %></strong>
-  </p>
+  <div class="show-header">
+    <h1 class="show-title"><%= listing.title %></h1>
+    <p class="show-subtitle">
+      <i class="fa-solid fa-location-dot me-1"></i>
+      <%= listing.location %>, <%= listing.country %>
+    </p>
+  </div>
 
   <% if (listing.image && listing.image.length > 0) { %>
-    <div class="image-container" style="--bg:url('<%= listing.image[0].url %>')">
-      <img src="<%= listing.image[0].url %>" class="listing-img">
+    <div class="hero-image-box" style="--bg:url('<%= listing.image[0].url %>')">
+      <img src="<%= listing.image[0].url %>" class="hero-img" alt="<%= listing.title %>">
+      <div class="floating-badge">
+        <i class="fa-solid fa-house me-1"></i>
+        <%= listing.category || "TripNest Stay" %>
+      </div>
     </div>
   <% } else { %>
-    <p>No image available</p>
-  <% } %>
-
-  <ul class="list-group mt-4">
-    <li class="list-group-item">
-      <strong>Description:</strong> <%= listing.description %>
-    </li>
-
-    <li class="list-group-item">
-      <strong>Price:</strong>
-      ₹ <%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %>
-    </li>
-
-    <li class="list-group-item">
-      <strong>Location:</strong> <%= listing.location %>
-    </li>
-
-    <li class="list-group-item">
-      <strong>Country:</strong> <%= listing.country %>
-    </li>
-  </ul>
-
-  <% if (currentUser && listing.owner._id.equals(currentUser._id)) { %>
-    <div class="mt-3 d-flex gap-2 flex-wrap">
-      <a href="/listings/<%= listing._id %>/edit" class="btn btn-warning px-4">
-        Edit
-      </a>
-
-      <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
-        <button class="btn btn-danger px-4">Delete</button>
-      </form>
+    <div class="premium-card text-center">
+      <p class="mb-0 text-muted">No image available</p>
     </div>
   <% } %>
 
-  <% if (currentUser && !listing.owner._id.equals(currentUser._id)) { %>
-    <div class="action-buttons">
-      <a href="/listings/<%= listing._id %>/book" class="animated-btn book-btn">
-        📅 Book Now
-      </a>
+  <div class="content-grid">
 
-      <button id="exploreBtn" class="animated-btn explore-btn">
-        ✨ Explore
-      </button>
-    </div>
-  <% } %>
+    <div>
 
-  <div id="nearbyPlaces" class="mt-4"></div>
+      <div class="premium-card mb-4">
+        <div class="host-row">
+          <div class="host-avatar">
+            <%= listing.owner.username.charAt(0).toUpperCase() %>
+          </div>
+          <div>
+            <h5 class="mb-0 fw-bold">Hosted by <%= listing.owner.username %></h5>
+            <small class="text-muted">Premium TripNest host</small>
+          </div>
+        </div>
 
-  <hr>
+        <h3 class="section-title">About this place</h3>
+        <p class="text-muted fs-6 mb-0">
+          <%= listing.description %>
+        </p>
 
-  <% if (currentUser) { %>
-    <h4>Add a Review</h4>
+        <div class="info-list">
+          <div class="info-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <div>
+              <strong>Location</strong>
+              <p class="mb-0 text-muted"><%= listing.location %>, <%= listing.country %></p>
+            </div>
+          </div>
 
-    <form action="/listings/<%= listing._id %>/reviews" method="POST">
+          <div class="info-item">
+            <i class="fa-solid fa-shield-heart"></i>
+            <div>
+              <strong>Safe booking</strong>
+              <p class="mb-0 text-muted">Your stay is managed securely through TripNest.</p>
+            </div>
+          </div>
 
-      <fieldset class="starability-slot">
-        <input type="radio" name="review[rating]" value="1" id="r1">
-        <label for="r1">1 star</label>
-
-        <input type="radio" name="review[rating]" value="2" id="r2">
-        <label for="r2">2 stars</label>
-
-        <input type="radio" name="review[rating]" value="3" id="r3">
-        <label for="r3">3 stars</label>
-
-        <input type="radio" name="review[rating]" value="4" id="r4">
-        <label for="r4">4 stars</label>
-
-        <input type="radio" name="review[rating]" value="5" id="r5">
-        <label for="r5">5 stars</label>
-      </fieldset>
-
-      <textarea name="review[comment]" class="form-control mt-3" required></textarea>
-
-      <button class="btn btn-success mt-3 px-4">
-        Submit Review
-      </button>
-
-    </form>
-  <% } %>
-
-  <h4 class="mt-4">All Reviews</h4>
-
-  <% if (listing.reviews && listing.reviews.length > 0) { %>
-    <% listing.reviews.forEach(review => { %>
-      <div class="card mb-3">
-        <div class="card-body">
-          <strong><%= review.author.username %></strong>
-
-          <fieldset class="starability-result" data-rating="<%= review.rating %>">
-            Rated: <%= review.rating %> stars
-          </fieldset>
-
-          <p><%= review.comment %></p>
+          <div class="info-item">
+            <i class="fa-solid fa-star"></i>
+            <div>
+              <strong>Guest favorite</strong>
+              <p class="mb-0 text-muted">Great option for travelers looking for comfort and location.</p>
+            </div>
+          </div>
         </div>
       </div>
-    <% }) %>
-  <% } else { %>
-    <p class="text-muted">No reviews yet.</p>
-  <% } %>
 
-  <h4>Where you'll be</h4>
-  <div id="map"></div>
+      <div class="premium-card mb-4">
+        <h3 class="section-title">Explore nearby</h3>
 
+        <% const hotelLocation = encodeURIComponent(`${listing.location}, ${listing.country}`); %>
+
+        <div class="nearby-grid">
+          <a class="nearby-card" target="_blank" href="https://www.google.com/maps/search/famous+places+near+<%= hotelLocation %>">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <h6 class="fw-bold mb-1">Famous Places</h6>
+            <small>Tourist attractions nearby</small>
+          </a>
+
+          <a class="nearby-card" target="_blank" href="https://www.google.com/maps/search/markets+near+<%= hotelLocation %>">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <h6 class="fw-bold mb-1">Markets</h6>
+            <small>Shopping areas nearby</small>
+          </a>
+
+          <a class="nearby-card" target="_blank" href="https://www.google.com/maps/search/restaurants+near+<%= hotelLocation %>">
+            <i class="fa-solid fa-utensils"></i>
+            <h6 class="fw-bold mb-1">Restaurants</h6>
+            <small>Food places nearby</small>
+          </a>
+        </div>
+      </div>
+
+      <div class="premium-card mb-4">
+        <h3 class="section-title">Where you'll be</h3>
+        <div id="map"></div>
+      </div>
+
+      <% if (currentUser) { %>
+        <div class="premium-card mb-4">
+          <h3 class="section-title">Add a review</h3>
+
+          <form action="/listings/<%= listing._id %>/reviews" method="POST" class="review-form">
+
+            <fieldset class="starability-slot">
+              <input type="radio" name="review[rating]" value="1" id="r1">
+              <label for="r1">1 star</label>
+
+              <input type="radio" name="review[rating]" value="2" id="r2">
+              <label for="r2">2 stars</label>
+
+              <input type="radio" name="review[rating]" value="3" id="r3">
+              <label for="r3">3 stars</label>
+
+              <input type="radio" name="review[rating]" value="4" id="r4">
+              <label for="r4">4 stars</label>
+
+              <input type="radio" name="review[rating]" value="5" id="r5">
+              <label for="r5">5 stars</label>
+            </fieldset>
+
+            <textarea
+              name="review[comment]"
+              class="form-control mt-3"
+              placeholder="Share your experience..."
+              required></textarea>
+
+            <button class="animated-btn secondary-btn mt-3">
+              Submit Review
+            </button>
+
+          </form>
+        </div>
+      <% } %>
+
+      <div class="premium-card">
+        <h3 class="section-title">Guest reviews</h3>
+
+        <% if (listing.reviews && listing.reviews.length > 0) { %>
+          <% listing.reviews.forEach(review => { %>
+            <div class="review-card">
+              <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <span class="review-user">
+                  <i class="fa-solid fa-user-circle me-1"></i>
+                  <%= review.author.username %>
+                </span>
+
+                <fieldset class="starability-result" data-rating="<%= review.rating %>">
+                  Rated: <%= review.rating %> stars
+                </fieldset>
+              </div>
+
+              <p class="text-muted mt-2 mb-0">
+                <%= review.comment %>
+              </p>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <p class="text-muted mb-0">No reviews yet. Be the first to review this stay.</p>
+        <% } %>
+      </div>
+
+    </div>
+
+    <aside>
+      <div class="premium-card booking-card">
+
+        <div class="price-text mb-3">
+          ₹ <%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %>
+          <span>/ night</span>
+        </div>
+
+        <div class="mb-3 text-muted">
+          <i class="fa-solid fa-circle-check text-success me-1"></i>
+          Instant booking available
+        </div>
+
+        <% if (currentUser && !listing.owner._id.equals(currentUser._id)) { %>
+          <a href="/listings/<%= listing._id %>/book" class="animated-btn mb-3">
+            📅 Book Now
+          </a>
+        <% } %>
+
+        <% if (!currentUser) { %>
+          <a href="/login" class="animated-btn mb-3">
+            Login to Book
+          </a>
+        <% } %>
+
+        <% if (currentUser && listing.owner._id.equals(currentUser._id)) { %>
+          <div class="owner-actions">
+            <a href="/listings/<%= listing._id %>/edit" class="btn btn-warning">
+              Edit
+            </a>
+
+            <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+              <button class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        <% } %>
+
+        <hr>
+
+        <div class="d-flex justify-content-between">
+          <span class="text-muted">Base price</span>
+          <strong>₹ <%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %></strong>
+        </div>
+
+        <div class="d-flex justify-content-between mt-2">
+          <span class="text-muted">TripNest fee</span>
+          <strong>₹ 0</strong>
+        </div>
+
+        <hr>
+
+        <div class="d-flex justify-content-between">
+          <strong>Total</strong>
+          <strong>₹ <%= listing.price ? listing.price.toLocaleString("en-IN") : "N/A" %></strong>
+        </div>
+
+      </div>
+    </aside>
+
+  </div>
 </div>
 
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 <script src="/js/map.js"></script>
-
-<script>
-  const exploreBtn = document.getElementById("exploreBtn");
-  const nearbyPlaces = document.getElementById("nearbyPlaces");
-
-  if (exploreBtn) {
-    exploreBtn.addEventListener("click", () => {
-      const hotelLocation = encodeURIComponent("<%= listing.location %>, <%= listing.country %>");
-
-      nearbyPlaces.innerHTML = `
-        <div class="card">
-          <div class="card-body">
-            <h4 class="mb-3">Explore Nearby</h4>
-
-            <div class="mb-3">
-              <h5>📍 Famous Places</h5>
-              <p class="text-muted">Find famous tourist places near this hotel.</p>
-              <a href="https://www.google.com/maps/search/famous+places+near+${hotelLocation}" target="_blank" class="btn btn-primary px-4">
-                View Famous Places
-              </a>
-            </div>
-
-            <hr>
-
-            <div class="mb-3">
-              <h5>🛍️ Markets</h5>
-              <p class="text-muted">Find popular markets near this hotel.</p>
-              <a href="https://www.google.com/maps/search/markets+near+${hotelLocation}" target="_blank" class="btn btn-success px-4">
-                View Markets
-              </a>
-            </div>
-
-            <hr>
-
-            <div>
-              <h5>🍽️ Restaurants</h5>
-              <p class="text-muted">Find restaurants near this hotel.</p>
-              <a href="https://www.google.com/maps/search/restaurants+near+${hotelLocation}" target="_blank" class="btn btn-danger px-4">
-                View Restaurants
-              </a>
-            </div>
-          </div>
-        </div>
-      `;
-    });
-  }
-</script>

@@ -119,6 +119,130 @@
   transform: translateX(16px);
 }
 
+/* ================= LISTING CARDS ================= */
+
+.listing-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.listing-card {
+  border: none;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  transition: 0.3s ease;
+  height: 100%;
+}
+
+.listing-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.16);
+}
+
+.listing-img-box {
+  position: relative;
+  height: 230px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.listing-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.4s ease;
+}
+
+.listing-card:hover .listing-img {
+  transform: scale(1.08);
+}
+
+.wishlist-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.92);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  transition: 0.3s;
+  z-index: 2;
+}
+
+.wishlist-btn:hover {
+  transform: scale(1.1);
+  background: #fff;
+}
+
+.category-badge {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  background: rgba(15,23,42,0.82);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+}
+
+.listing-body {
+  padding: 16px 18px 18px;
+}
+
+.listing-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listing-location {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+.listing-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+}
+
+.price span {
+  font-weight: 500;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.view-pill {
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  color: white;
+  padding: 7px 13px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
 /* ================= MOBILE ================= */
 
 @media (max-width: 768px) {
@@ -128,6 +252,15 @@
 
   .filter-btn {
     display: inline-flex !important;
+  }
+
+  .tax-pill {
+    font-size: 0.72rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .listing-img-box {
+    height: 220px;
   }
 }
 </style>
@@ -157,27 +290,27 @@
       <span>Iconic Cities</span>
     </a>
 
-    <a href="/listings?category=Castles" class="filter">
+    <a href="/listings?category=Castles" class="filter" data-category="Castles">
       <i class="fa-solid fa-chess-rook"></i>
       <span>Castles</span>
     </a>
 
-    <a href="/listings?category=Amazing Pools" class="filter">
+    <a href="/listings?category=Amazing Pools" class="filter" data-category="Amazing Pools">
       <i class="fa-solid fa-person-swimming"></i>
       <span>Pools</span>
     </a>
 
-    <a href="/listings?category=Camping" class="filter">
+    <a href="/listings?category=Camping" class="filter" data-category="Camping">
       <i class="fa-solid fa-campground"></i>
       <span>Camping</span>
     </a>
 
-    <a href="/listings?category=Farm" class="filter">
+    <a href="/listings?category=Farm" class="filter" data-category="Farm">
       <i class="fa-solid fa-tractor"></i>
       <span>Farms</span>
     </a>
 
-    <a href="/listings?category=Arctic" class="filter">
+    <a href="/listings?category=Arctic" class="filter" data-category="Arctic">
       <i class="fa-solid fa-snowflake"></i>
       <span>Arctic</span>
     </a>
@@ -199,32 +332,54 @@
 
 <!-- ================= LISTINGS ================= -->
 
-<div class="row row-cols-lg-3 row-cols-md-3 row-cols-sm-1 mt-4">
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4 mt-4">
 
   <% for (let listing of alllistings) { %>
-    <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
-      <div class="card mb-4">
+    <div class="col">
+      <a href="/listings/<%= listing._id %>" class="listing-link">
 
-        <!-- ✅ FIXED IMAGE -->
-        <img
-          src="<%= (listing.image && listing.image.length > 0) 
-                  ? listing.image[0].url 
-                  : 'https://via.placeholder.com/300' %>"
-          class="card-img-top"
-          style="height:200px; object-fit:contain; background:#f5f5f5;"
-        />
+        <div class="listing-card">
 
-        <div class="card-body">
-          <h5><%= listing.title %></h5>
-          <p class="text-muted mb-1"><%= listing.location %></p>
+          <div class="listing-img-box">
+            <img
+              src="<%= (listing.image && listing.image.length > 0) 
+                      ? listing.image[0].url 
+                      : 'https://via.placeholder.com/500x350' %>"
+              class="listing-img"
+              alt="<%= listing.title %>"
+            >
 
-          <p class="price" data-base-price="<%= listing.price %>">
-            ₹ <%= listing.price.toLocaleString("en-IN") %>
-          </p>
+            <button class="wishlist-btn" type="button" onclick="event.preventDefault();">
+              <i class="fa-solid fa-heart"></i>
+            </button>
+
+            <div class="category-badge">
+              <%= listing.category || "TripNest" %>
+            </div>
+          </div>
+
+          <div class="listing-body">
+            <h5 class="listing-title"><%= listing.title %></h5>
+
+            <p class="listing-location">
+              <i class="fa-solid fa-location-dot me-1"></i>
+              <%= listing.location %><%= listing.country ? ", " + listing.country : "" %>
+            </p>
+
+            <div class="listing-bottom">
+              <p class="price" data-base-price="<%= listing.price %>">
+                ₹ <%= listing.price.toLocaleString("en-IN") %>
+                <span>/ night</span>
+              </p>
+
+              <span class="view-pill">View</span>
+            </div>
+          </div>
+
         </div>
 
-      </div>
-    </a>
+      </a>
+    </div>
   <% } %>
 
 </div>
@@ -236,14 +391,17 @@ const taxSwitch = document.getElementById("taxSwitch");
 const prices = document.querySelectorAll(".price");
 const TAX_RATE = 0.18;
 
-taxSwitch.addEventListener("change", () => {
-  prices.forEach(p => {
-    const base = Number(p.dataset.basePrice);
-    p.innerText = taxSwitch.checked
-      ? `₹ ${(base + base * TAX_RATE).toLocaleString("en-IN")} (incl. tax)`
-      : `₹ ${base.toLocaleString("en-IN")}`;
+if (taxSwitch) {
+  taxSwitch.addEventListener("change", () => {
+    prices.forEach(p => {
+      const base = Number(p.dataset.basePrice);
+
+      p.innerHTML = taxSwitch.checked
+        ? `₹ ${(base + base * TAX_RATE).toLocaleString("en-IN")} <span>(incl. tax)</span>`
+        : `₹ ${base.toLocaleString("en-IN")} <span>/ night</span>`;
+    });
   });
-});
+}
 
 const filters = document.querySelectorAll(".filter");
 const saved = localStorage.getItem("activeCategory");
@@ -252,6 +410,7 @@ filters.forEach(filter => {
   if (filter.dataset.category === saved) {
     filter.classList.add("active");
   }
+
   filter.addEventListener("click", () => {
     localStorage.setItem("activeCategory", filter.dataset.category);
   });
@@ -261,7 +420,7 @@ const filtersScroll = document.querySelector(".filters-scroll");
 const filterBtn = document.getElementById("filterBtn");
 
 function checkFilterOverflow() {
-  if (!filtersScroll) return;
+  if (!filtersScroll || !filterBtn) return;
 
   const isOverflowing =
     filtersScroll.scrollWidth > filtersScroll.clientWidth;
