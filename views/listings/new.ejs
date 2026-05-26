@@ -1,64 +1,278 @@
 <% layout("/layouts/boilerplate") -%>
 
-<div class="row">
-  <div class="col-8 offset-2">
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a, #1e293b, #312e81);
+    min-height: 100vh;
+  }
 
-    <h3>Create a New Listing</h3>
+  .listing-wrapper {
+    padding: 40px 0;
+  }
+
+  .listing-card {
+    max-width: 850px;
+    margin: auto;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 28px;
+    padding: 40px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+    animation: fadeUp 0.8s ease;
+  }
+
+  .listing-title {
+    text-align: center;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 30px;
+    font-size: 2rem;
+  }
+
+  .form-label {
+    color: #e2e8f0;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .form-control,
+  .form-select {
+    border-radius: 16px;
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    transition: 0.3s;
+  }
+
+  .form-control::placeholder {
+    color: #94a3b8;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 18px rgba(139,92,246,0.35);
+    background: rgba(255,255,255,0.12);
+    color: white;
+  }
+
+  textarea.form-control {
+    min-height: 130px;
+    resize: none;
+  }
+
+  .form-select option {
+    color: black;
+  }
+
+  .upload-box {
+    border: 2px dashed rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .upload-box:hover {
+    border-color: #8b5cf6;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .upload-box input {
+    display: none;
+  }
+
+  .preview-container {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+  }
+
+  .preview-container img {
+    width: 110px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 14px;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+  }
+
+  .animated-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    background: linear-gradient(45deg, #7c3aed, #ec4899, #06b6d4);
+    background-size: 300% 300%;
+    animation: gradientMove 5s infinite ease;
+    box-shadow: 0 12px 30px rgba(124,58,237,0.4);
+    transition: 0.3s;
+    margin-top: 20px;
+  }
+
+  .animated-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 40px rgba(236,72,153,0.45);
+  }
+
+  .invalid-feedback {
+    color: #fca5a5;
+  }
+
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media(max-width: 768px) {
+    .listing-card {
+      padding: 25px;
+      margin: 15px;
+    }
+  }
+</style>
+
+<div class="listing-wrapper">
+  <div class="listing-card">
+
+    <h2 class="listing-title">✨ Create a New Listing</h2>
 
     <form method="POST" action="/listings" enctype="multipart/form-data" class="needs-validation" novalidate>
 
       <!-- TITLE -->
-      <label class="form-label">Title</label>
-      <input name="listing[title]" type="text" class="form-control" required>
-      <div class="invalid-feedback">Title is required.</div>
-      <br>
+      <div class="mb-3">
+        <label class="form-label">Title</label>
+        <input
+          name="listing[title]"
+          type="text"
+          class="form-control"
+          placeholder="Enter listing title"
+          required>
+        <div class="invalid-feedback">Title is required.</div>
+      </div>
 
       <!-- DESCRIPTION -->
-      <label class="form-label">Description</label>
-      <textarea name="listing[description]" class="form-control" required></textarea>
-      <div class="invalid-feedback">Description is required.</div>
-      <br>
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea
+          name="listing[description]"
+          class="form-control"
+          placeholder="Describe your place..."
+          required></textarea>
+        <div class="invalid-feedback">Description is required.</div>
+      </div>
 
-      <!-- 🖼 MULTIPLE IMAGES -->
-      <label class="form-label">Upload Images</label>
-      <input type="file" name="image" multiple class="form-control" required>
-      <br>
+      <!-- IMAGE -->
+      <div class="mb-3">
+        <label class="form-label">Upload Images</label>
 
-      <!-- PRICE & COUNTRY -->
+        <label class="upload-box">
+          📸 Click to upload images
+          <input
+            type="file"
+            id="imageUpload"
+            name="image"
+            multiple
+            required>
+        </label>
+
+        <div class="preview-container" id="previewContainer"></div>
+      </div>
+
+      <!-- PRICE + COUNTRY -->
       <div class="row">
         <div class="mb-3 col-md-4">
           <label class="form-label">Price</label>
-          <input name="listing[price]" type="number" class="form-control" required min="1">
+          <input
+            name="listing[price]"
+            type="number"
+            class="form-control"
+            placeholder="₹ Price"
+            required
+            min="1">
         </div>
 
         <div class="mb-3 col-md-8">
           <label class="form-label">Country</label>
-          <input name="listing[country]" type="text" class="form-control" required>
+          <input
+            name="listing[country]"
+            type="text"
+            class="form-control"
+            placeholder="Country"
+            required>
         </div>
       </div>
 
       <!-- LOCATION -->
-      <label class="form-label">Location</label>
-      <input name="listing[location]" type="text" class="form-control" required>
-      <br>
+      <div class="mb-3">
+        <label class="form-label">Location</label>
+        <input
+          name="listing[location]"
+          type="text"
+          class="form-control"
+          placeholder="City / Area"
+          required>
+      </div>
 
       <!-- CATEGORY -->
-      <label class="form-label">Category</label>
-      <select name="listing[category]" class="form-select" required>
-        <option value="">Select category</option>
-        <option value="Iconic Cities">Iconic Cities</option>
-        <option value="Castles">Castles</option>
-        <option value="Amazing Pools">Amazing Pools</option>
-        <option value="Camping">Camping</option>
-        <option value="Farm">Farm</option>
-        <option value="Arctic">Arctic</option>
-      </select>
+      <div class="mb-3">
+        <label class="form-label">Category</label>
+        <select name="listing[category]" class="form-select" required>
+          <option value="">Select category</option>
+          <option value="Iconic Cities">Iconic Cities</option>
+          <option value="Castles">Castles</option>
+          <option value="Amazing Pools">Amazing Pools</option>
+          <option value="Camping">Camping</option>
+          <option value="Farm">Farm</option>
+          <option value="Arctic">Arctic</option>
+        </select>
+      </div>
 
-      <br>
-
-      <button class="btn btn-primary">Add</button>
+      <button class="animated-btn">
+        🚀 Add Listing
+      </button>
 
     </form>
-
   </div>
 </div>
+
+<script>
+  const imageUpload = document.getElementById("imageUpload");
+  const previewContainer = document.getElementById("previewContainer");
+
+  imageUpload.addEventListener("change", function () {
+    previewContainer.innerHTML = "";
+
+    Array.from(this.files).forEach(file => {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        previewContainer.appendChild(img);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  });
+</script>

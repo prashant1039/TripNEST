@@ -1,14 +1,124 @@
-<footer>
-    <div class="f-info">
-        <div class="f-info-socials">
-            <i class="fa-brands fa-facebook"></i>
-            <i class="fa-brands fa-instagram"></i>
+<footer class="tripnest-footer">
+  <div class="footer-content">
 
-        </div>
-        <div> &copy :TripNest Private Limited</div>
-        <div class="f-info-links">
-            <a href = "/privacy">Privacy</a>
-            <a herf = "/terms">Terms</a>
-        </div>
+    <div class="f-brand">
+      <i class="fa-solid fa-bed"></i>
+      <span>TripNest</span>
     </div>
+
+    <div class="f-socials">
+      <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="#"><i class="fa-brands fa-instagram"></i></a>
+      <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+      <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+    </div>
+
+    <p class="copyright">
+      © 2026 TripNest Private Limited. All rights reserved.
+    </p>
+
+    <div class="f-links">
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="/contact">Contact</a>
+    </div>
+
+  </div>
 </footer>
+
+<style>
+  .tripnest-footer {
+    width: 100%;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+    padding: 22px 20px;
+    margin-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: auto;
+    text-align: center;
+  }
+
+  .f-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .f-brand i {
+    color: #8b5cf6;
+    font-size: 1.3rem;
+  }
+
+  .f-socials {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .f-socials a {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: 0.3s ease;
+  }
+
+  .f-socials a:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+  }
+
+  .copyright {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+
+  .f-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .f-links a {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+  }
+
+  .f-links a:hover {
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .tripnest-footer {
+      padding: 18px 15px;
+    }
+
+    .f-socials a {
+      width: 38px;
+      height: 38px;
+    }
+
+    .f-brand {
+      font-size: 1.3rem;
+    }
+  }
+</style>
