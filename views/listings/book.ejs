@@ -15,7 +15,6 @@
     position: relative;
   }
 
-  /* FLOATING HOTEL LIGHT EFFECT */
   .bg-glow {
     position: absolute;
     width: 500px;
@@ -23,15 +22,6 @@
     background: radial-gradient(circle, rgba(255,215,0,0.15), transparent 70%);
     animation: floatGlow 6s ease-in-out infinite alternate;
     z-index: 1;
-  }
-
-  @keyframes floatGlow {
-    0% {
-      transform: translateY(-20px);
-    }
-    100% {
-      transform: translateY(20px);
-    }
   }
 
   .booking-card {
@@ -44,14 +34,12 @@
     animation: fadeUp 1s ease;
     position: relative;
     z-index: 10;
-    backdrop-filter: blur(10px);
   }
 
   .booking-title {
     text-align: center;
     font-weight: 700;
     color: #2d3436;
-    margin-bottom: 8px;
   }
 
   .booking-subtitle {
@@ -77,7 +65,6 @@
     border-radius: 14px;
     padding: 14px;
     border: 2px solid #dfe6e9;
-    transition: all 0.3s ease;
   }
 
   .form-control:focus {
@@ -98,33 +85,20 @@
     background: linear-gradient(45deg, #1dd1a1, #10ac84, #00d2d3);
     background-size: 300% 300%;
     animation: gradientMove 5s ease infinite;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease;
   }
 
   .animated-btn:hover {
     transform: scale(1.04);
   }
 
-  .animated-btn:active {
-    transform: scale(0.96);
+  textarea.form-control {
+    resize: none;
+    min-height: 120px;
   }
 
-  .animated-btn::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -120%;
-    width: 100%;
-    height: 100%;
-    background: rgba(255,255,255,0.3);
-    transform: skewX(-25deg);
-    transition: 0.7s;
-  }
-
-  .animated-btn:hover::before {
-    left: 120%;
+  @keyframes floatGlow {
+    0% { transform: translateY(-20px); }
+    100% { transform: translateY(20px); }
   }
 
   @keyframes gradientMove {
@@ -143,25 +117,12 @@
       transform: translateY(0);
     }
   }
-
-  textarea.form-control {
-    resize: none;
-    min-height: 120px;
-  }
-
-  @media (max-width: 768px) {
-    .booking-card {
-      padding: 25px;
-    }
-  }
 </style>
 
 <div class="booking-container">
-
   <div class="bg-glow"></div>
 
   <div class="booking-card">
-
     <h2 class="booking-title">🏨 Book Your Luxury Stay</h2>
     <p class="booking-subtitle"><%= listing.title %></p>
 
@@ -173,69 +134,46 @@
 
       <div class="mb-3">
         <label class="form-label">Full Name</label>
-        <input
-          type="text"
-          name="booking[name]"
-          class="form-control"
-          required
-          placeholder="Enter your full name"
-        >
+        <input type="text" name="booking[name]" class="form-control" required placeholder="Enter your full name">
       </div>
 
       <div class="mb-3">
         <label class="form-label">Phone Number</label>
-        <input
-          type="tel"
-          name="booking[phone]"
-          class="form-control"
-          required
-          placeholder="Enter phone number"
-        >
+        <input type="tel" name="booking[phone]" class="form-control" required placeholder="Enter phone number">
       </div>
 
       <div class="mb-3">
         <label class="form-label">Select Date</label>
+        <input type="date" name="booking[date]" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Room Number</label>
         <input
-          type="date"
-          name="booking[date]"
+          type="number"
+          name="booking[roomNumber]"
+          min="1"
           class="form-control"
           required
+          placeholder="Enter room number"
         >
       </div>
 
       <div class="row">
         <div class="col-md-6 mb-3">
           <label class="form-label">Guests</label>
-          <input
-            type="number"
-            name="booking[guests]"
-            min="1"
-            class="form-control"
-            required
-            placeholder="Guests"
-          >
+          <input type="number" name="booking[guests]" min="1" class="form-control" required placeholder="Guests">
         </div>
 
         <div class="col-md-6 mb-3">
           <label class="form-label">Children</label>
-          <input
-            type="number"
-            name="booking[children]"
-            min="0"
-            value="0"
-            class="form-control"
-            placeholder="Children"
-          >
+          <input type="number" name="booking[children]" min="0" value="0" class="form-control" placeholder="Children">
         </div>
       </div>
 
       <div class="mb-3">
         <label class="form-label">Payment Method</label>
-        <select
-          name="booking[paymentMethod]"
-          class="form-control"
-          required
-        >
+        <select name="booking[paymentMethod]" class="form-control" required>
           <option value="">Select Payment Method</option>
           <option value="UPI">UPI</option>
           <option value="Cash">Cash</option>
@@ -245,11 +183,7 @@
 
       <div class="mb-4">
         <label class="form-label">Special Requests</label>
-        <textarea
-          name="booking[notes]"
-          class="form-control"
-          placeholder="Any special request?"
-        ></textarea>
+        <textarea name="booking[notes]" class="form-control" placeholder="Any special request?"></textarea>
       </div>
 
       <button class="animated-btn">
@@ -257,6 +191,5 @@
       </button>
 
     </form>
-
   </div>
 </div>

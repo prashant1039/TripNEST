@@ -1,64 +1,177 @@
 <% layout("/layouts/boilerplate") -%>
 
-<div class="container mt-4">
+<style>
+  body {
+    background: linear-gradient(135deg, #0f172a, #1e293b, #312e81);
+  }
 
-  <h2>My Bookings</h2>
+  .bookings-container {
+    min-height: 100vh;
+    padding: 50px 15px;
+  }
+
+  .bookings-title {
+    text-align: center;
+    color: white;
+    font-weight: 800;
+    margin-bottom: 35px;
+    animation: fadeDown 0.8s ease;
+  }
+
+  .booking-card {
+    border: none;
+    border-radius: 26px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+    animation: fadeUp 0.9s ease;
+    transition: 0.35s ease;
+  }
+
+  .booking-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 28px 60px rgba(0,0,0,0.45);
+  }
+
+  .booking-header {
+    padding: 20px;
+    color: white;
+    background: linear-gradient(45deg, #7c3aed, #ec4899, #06b6d4);
+    background-size: 300% 300%;
+    animation: gradientMove 5s infinite ease;
+  }
+
+  .booking-body {
+    padding: 24px;
+  }
+
+  .booking-info {
+    background: #f8fafc;
+    padding: 12px 15px;
+    border-radius: 14px;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  .cancel-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 40px;
+    font-weight: 800;
+    color: white;
+    background: linear-gradient(45deg, #ef4444, #ec4899, #f97316);
+    background-size: 300% 300%;
+    animation: gradientMove 5s infinite ease;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s ease;
+  }
+
+  .cancel-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 35px rgba(239,68,68,0.45);
+  }
+
+  .cancel-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.35);
+    transform: skewX(-25deg);
+    transition: 0.7s;
+  }
+
+  .cancel-btn:hover::before {
+    left: 120%;
+  }
+
+  .empty-box {
+    max-width: 500px;
+    margin: auto;
+    padding: 35px;
+    border-radius: 26px;
+    text-align: center;
+    color: white;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(18px);
+    animation: fadeUp 0.9s ease;
+  }
+
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(45px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeDown {
+    from {
+      opacity: 0;
+      transform: translateY(-35px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<div class="bookings-container">
+  <h2 class="bookings-title">🏨 My Bookings</h2>
 
   <% if (bookings.length === 0) { %>
-    <p class="text-muted">No bookings yet.</p>
+    <div class="empty-box">
+      <h3>No bookings found 😔</h3>
+      <p>Book your first luxury stay with TripNEST.</p>
+    </div>
   <% } %>
 
-  <div class="row mt-3">
+  <div class="container">
+    <div class="row">
+      <% bookings.forEach(booking => { %>
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="booking-card">
 
-    <% bookings.forEach(b => { %>
+            <div class="booking-header">
+              <h4 class="mb-1"><%= booking.listing.title %></h4>
+              <small>📍 <%= booking.listing.location %></small>
+            </div>
 
-      <div class="col-md-6 mb-3">
+            <div class="booking-body">
+              <div class="booking-info">📅 Date: <%= booking.date.toDateString() %></div>
+              <div class="booking-info">🚪 Room No: <%= booking.roomNumber %></div>
+              <div class="booking-info">👥 Guests: <%= booking.guests %></div>
+              <div class="booking-info">🧒 Children: <%= booking.children %></div>
+              <div class="booking-info">💳 Payment: <%= booking.paymentMethod %></div>
 
-        <div class="card shadow-sm">
+              <% if (booking.notes) { %>
+                <div class="booking-info">📝 Notes: <%= booking.notes %></div>
+              <% } %>
 
-          <div class="card-body">
-
-            <h5>
-              <%= b.listing.title %>
-            </h5>
-
-            <p>
-              <strong>Date:</strong>
-              <%= b.date.toDateString() %>
-            </p>
-
-            <p>
-              <strong>Name:</strong>
-              <%= b.name %>
-            </p>
-
-            <p>
-              <strong>Phone:</strong>
-              <%= b.phone %>
-            </p>
-
-            <p>
-              <strong>Guests:</strong>
-              <%= b.children %>
-            </p>
-
-            <p>
-              <strong>Payment:</strong>
-              <%= b.paymentMethod %>
-            </p>
-
-            <a href="/listings/<%= b.listing._id %>" class="btn btn-primary btn-sm">
-              View Listing
-            </a>
+              <form action="/bookings/<%= booking._id %>?_method=DELETE" method="POST">
+                <button class="cancel-btn">
+                  ❌ Cancel Booking
+                </button>
+              </form>
+            </div>
 
           </div>
-
         </div>
-
-      </div>
-
-    <% }) %>
-
+      <% }) %>
+    </div>
   </div>
-
 </div>

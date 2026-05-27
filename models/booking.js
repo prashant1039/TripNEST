@@ -30,7 +30,7 @@ const bookingSchema = new mongoose.Schema({
 
   guests: {
     type: Number,
-    required: true,   // ✅ THIS FIXES YOUR ERROR
+    required: true,
   },
 
   children: {
@@ -38,18 +38,33 @@ const bookingSchema = new mongoose.Schema({
     default: 0,
   },
 
+  roomNumber: {
+    type: Number,
+    required: false,
+    default: 1,
+  },
+
   paymentMethod: {
     type: String,
-    enum: ["UPI", "Cash"],
+    enum: ["UPI", "Cash", "Card"],
     required: true,
   },
 
-  message: String,
+  notes: String,
 
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
+
+bookingSchema.index(
+  {
+    listing: 1,
+    date: 1,
+    roomNumber: 1,
+  },
+  { unique: true }
+);
 
 module.exports = mongoose.model("Booking", bookingSchema);
