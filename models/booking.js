@@ -40,8 +40,7 @@ const bookingSchema = new mongoose.Schema({
 
   roomNumber: {
     type: Number,
-    required: false,
-    default: 1,
+    required: true,
   },
 
   paymentMethod: {
@@ -59,11 +58,7 @@ const bookingSchema = new mongoose.Schema({
 });
 
 bookingSchema.index(
-  {
-    listing: 1,
-    date: 1,
-    roomNumber: 1,
-  },
+  { listing: 1, date: 1, roomNumber: 1 },
   { unique: true }
 );
 

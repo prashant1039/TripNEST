@@ -19,63 +19,58 @@ router.get(
       return res.redirect("/listings");
     }
 
-    res.render("bookings/new", { listing });
+    const allRooms = [
+      101, 102, 103, 104, 105,
+      201, 202, 203, 204, 205,
+      301, 302, 303, 304, 305
+    ];
+
+    res.render("listings/book", {
+      listing,
+      allRooms,
+    });
   })
 );
 
 // CREATE BOOKING
-router.post(
-  "/listings/:id/book",
-  isLoggedIn,
-  wrapAsync(async (req, res) => {
-    try {
-      const bookingData = req.body.booking;
+router.post("/listings/:id/book", isLoggedIn, async (req, res) => {
+  try {
+    const bookingData = req.body.booking;
 
-      const booking = new Booking({
-        listing: req.params.id,
-        user: req.user._id,
-        name: bookingData.name,
-        phone: bookingData.phone,
-        date: bookingData.date,
-        guests: bookingData.guests,
-        children: bookingData.children || 0,
-        roomNumber: Number(bookingData.roomNumber),
-        paymentMethod: bookingData.paymentMethod,
-        notes: bookingData.notes,
-      });
+    const booking = new Booking({
+      listing: req.params.id,
+      user: req.user._id,
+      name: bookingData.name,
+      phone: bookingData.phone,
+      date: bookingData.date,
+      guests: bookingData.guests,
+      children: bookingData.children || 0,
+      roomNumber: Number(bookingData.roomNumber),
+      paymentMethod: bookingData.paymentMethod,
+      notes: bookingData.notes,
+    });
 
-      await booking.save();
+    await booking.save();
 
-      req.flash(
-        "success",
-        `🎉 Room ${bookingData.roomNumber} booked successfully!`
-      );
-
-      res.redirect(`/listings/${req.params.id}`);
-
-    } catch (err) {
-      if (err.code === 11000) {
-        req.flash(
-          "error",
-          `❌ Room ${req.body.booking.roomNumber} is already booked. Please choose another room.`
-        );
-      } else {
-        req.flash("error", "Something went wrong while booking.");
-      }
-
-      res.redirect(`/listings/${req.params.id}/book`);
+    req.flash("success", `🎉 Room ${bookingData.roomNumber} booked successfully!`);
+    res.redirect(`/listings/${req.params.id}`);
+  } catch (err) {
+    if (err.code === 11000) {
+      req.flash("error", "❌ This room is already booked for selected date.");
+    } else {
+      req.flash("error", err.message);
     }
-  })
-);
+
+    res.redirect(`/listings/${req.params.id}/book`);
+  }
+});
 
 // MY BOOKINGS
 router.get(
   "/bookings",
   isLoggedIn,
   wrapAsync(async (req, res) => {
-    const bookings = await Booking.find({
-      user: req.user._id,
-    })
+    const bookings = await Booking.find({ user: req.user._id })
       .populate("listing")
       .sort({ createdAt: -1 });
 

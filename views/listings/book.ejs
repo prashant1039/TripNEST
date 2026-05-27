@@ -12,33 +12,21 @@
     justify-content: center;
     align-items: center;
     padding: 40px 15px;
-    position: relative;
-  }
-
-  .bg-glow {
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(255,215,0,0.15), transparent 70%);
-    animation: floatGlow 6s ease-in-out infinite alternate;
-    z-index: 1;
   }
 
   .booking-card {
     width: 100%;
-    max-width: 650px;
-    background: rgba(255,255,255,0.95);
+    max-width: 720px;
+    background: rgba(255,255,255,0.96);
     padding: 35px;
     border-radius: 28px;
     box-shadow: 0 20px 45px rgba(0,0,0,0.35);
     animation: fadeUp 1s ease;
-    position: relative;
-    z-index: 10;
   }
 
   .booking-title {
     text-align: center;
-    font-weight: 700;
+    font-weight: 800;
     color: #2d3436;
   }
 
@@ -57,7 +45,7 @@
   }
 
   .form-label {
-    font-weight: 600;
+    font-weight: 700;
     color: #2d3436;
   }
 
@@ -67,10 +55,43 @@
     border: 2px solid #dfe6e9;
   }
 
-  .form-control:focus {
-    border-color: #6c5ce7;
-    box-shadow: 0 0 15px rgba(108,92,231,0.2);
-    transform: scale(1.02);
+  .room-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+    gap: 14px;
+    margin-top: 10px;
+  }
+
+  .room-card {
+    padding: 18px 10px;
+    border-radius: 18px;
+    text-align: center;
+    cursor: pointer;
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border: 2px solid #10b981;
+    transition: 0.3s ease;
+    font-weight: 700;
+  }
+
+  .room-card:hover {
+    transform: translateY(-6px) scale(1.04);
+    box-shadow: 0 14px 28px rgba(16,185,129,0.35);
+  }
+
+  .room-card.selected {
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+    color: white;
+    border-color: #6366f1;
+    box-shadow: 0 15px 35px rgba(99,102,241,0.4);
+  }
+
+  .room-card h5 {
+    margin: 0;
+    font-weight: 800;
+  }
+
+  .room-card span {
+    font-size: 13px;
   }
 
   .animated-btn {
@@ -85,6 +106,7 @@
     background: linear-gradient(45deg, #1dd1a1, #10ac84, #00d2d3);
     background-size: 300% 300%;
     animation: gradientMove 5s ease infinite;
+    transition: 0.3s ease;
   }
 
   .animated-btn:hover {
@@ -96,11 +118,6 @@
     min-height: 120px;
   }
 
-  @keyframes floatGlow {
-    0% { transform: translateY(-20px); }
-    100% { transform: translateY(20px); }
-  }
-
   @keyframes gradientMove {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -110,7 +127,7 @@
   @keyframes fadeUp {
     from {
       opacity: 0;
-      transform: translateY(50px);
+      transform: translateY(45px);
     }
     to {
       opacity: 1;
@@ -120,9 +137,8 @@
 </style>
 
 <div class="booking-container">
-  <div class="bg-glow"></div>
-
   <div class="booking-card">
+
     <h2 class="booking-title">🏨 Book Your Luxury Stay</h2>
     <p class="booking-subtitle"><%= listing.title %></p>
 
@@ -147,16 +163,19 @@
         <input type="date" name="booking[date]" class="form-control" required>
       </div>
 
+      <input type="hidden" name="booking[roomNumber]" id="selectedRoom" required>
+
       <div class="mb-3">
-        <label class="form-label">Room Number</label>
-        <input
-          type="number"
-          name="booking[roomNumber]"
-          min="1"
-          class="form-control"
-          required
-          placeholder="Enter room number"
-        >
+        <label class="form-label">Choose Your Room</label>
+
+        <div class="room-grid">
+          <% allRooms.forEach(room => { %>
+            <div class="room-card" data-room="<%= room %>">
+              <h5>Room <%= room %></h5>
+              <span>✅ Available</span>
+            </div>
+          <% }) %>
+        </div>
       </div>
 
       <div class="row">
@@ -193,3 +212,16 @@
     </form>
   </div>
 </div>
+
+<script>
+  const roomCards = document.querySelectorAll(".room-card");
+  const selectedRoom = document.getElementById("selectedRoom");
+
+  roomCards.forEach(card => {
+    card.addEventListener("click", () => {
+      roomCards.forEach(c => c.classList.remove("selected"));
+      card.classList.add("selected");
+      selectedRoom.value = card.dataset.room;
+    });
+  });
+</script>
