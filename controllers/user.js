@@ -2,7 +2,6 @@ const User = require("../models/user");
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-// 📧 EMAIL SETUP
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -23,7 +22,6 @@ module.exports.signup = async (req, res, next) => {
     const newUser = new User({ username, email });
     const registeredUser = await User.register(newUser, password);
 
-    // 💌 SEND WELCOME EMAIL
     await transporter.sendMail({
       to: email,
       from: process.env.EMAIL_USER,
@@ -32,32 +30,19 @@ module.exports.signup = async (req, res, next) => {
         <div style="font-family: Arial; padding: 20px;">
           <h2 style="color:#4CAF50;">Hey ${username} 👋</h2>
           <p>Welcome to <b>TripNest</b> 🌍✨</p>
-
-          <p>
-            We're super happy to have you with us 💖<br>
-            Your journey starts here!
-          </p>
-
-          <p>
-            ✈️ Explore new places<br>
-            🏡 Find amazing stays<br>
-            ❤️ Make memories
-          </p>
-
+          <p>We're super happy to have you with us 💖<br>Your journey starts here!</p>
+          <p>✈️ Explore new places<br>🏡 Find amazing stays<br>❤️ Make memories</p>
           <hr>
-
-          <p style="color:gray;">
-            Thank you for choosing us 💫<br>
-            <b>— Team TripNest</b>
-          </p>
+          <p style="color:gray;">Thank you for choosing us 💫<br><b>— Team TripNest</b></p>
         </div>
       `,
     });
 
     req.login(registeredUser, (err) => {
       if (err) return next(err);
+
       req.flash("success", "Welcome to TripNest!");
-      res.redirect(res.locals.redirectUrl || "/listings");
+      res.redirect("/");
     });
 
   } catch (e) {
@@ -80,19 +65,17 @@ module.exports.login = (req, res) => {
 module.exports.logout = (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
+
     req.flash("success", "Logged out!");
-    res.redirect("/listings");
+    res.redirect("/signup");
   });
 };
 
 // ================= OTP RESET =================
-
-// 👉 Forgot page
 module.exports.renderForgotForm = (req, res) => {
   res.render("user/forgot");
 };
 
-// 👉 Send OTP (ANY email)
 module.exports.sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
@@ -123,7 +106,6 @@ module.exports.sendOtp = async (req, res) => {
   }
 };
 
-// 👉 Verify OTP
 module.exports.verifyOtp = async (req, res) => {
   try {
     const { email, otp, password } = req.body;

@@ -1,13 +1,133 @@
-<% if (success && success.length) { %>
-  <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-    <%= success[0] %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  </div>
-<% } %>
+<style>
+  .flash-wrapper {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    width: 380px;
+  }
 
-<% if (error && error.length) { %>
-  <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-    <%= error[0] %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  </div>
-<% } %>
+  .flash-alert {
+    border: none;
+    border-radius: 20px;
+    padding: 18px 22px;
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    animation: slideIn 0.8s ease, floatGlow 3s infinite alternate;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .flash-alert::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.25);
+    transform: skewX(-25deg);
+    animation: shine 2.5s infinite;
+  }
+
+  .flash-success {
+    background: linear-gradient(135deg, #10b981, #06b6d4, #3b82f6);
+    background-size: 300% 300%;
+    animation: gradientMove 5s infinite, slideIn 0.8s ease;
+  }
+
+  .flash-error {
+    background: linear-gradient(135deg, #ef4444, #ec4899, #f97316);
+    background-size: 300% 300%;
+    animation: gradientMove 5s infinite, slideIn 0.8s ease;
+  }
+
+  .flash-icon {
+    font-size: 20px;
+    margin-right: 10px;
+  }
+
+  .flash-close {
+    filter: invert(1);
+    opacity: 0.9;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(100px) scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+  }
+
+  @keyframes shine {
+    0% {
+      left: -120%;
+    }
+    100% {
+      left: 120%;
+    }
+  }
+
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes floatGlow {
+    from {
+      transform: translateY(0px);
+    }
+    to {
+      transform: translateY(-6px);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .flash-wrapper {
+      width: 90%;
+      right: 5%;
+      left: 5%;
+      top: 15px;
+    }
+  }
+</style>
+
+<div class="flash-wrapper">
+
+  <% if (success && success.length) { %>
+    <div class="alert flash-alert flash-success alert-dismissible fade show" role="alert">
+      <span class="flash-icon">✅</span>
+      <%= success[0] %>
+      <button type="button" class="btn-close flash-close" data-bs-dismiss="alert"></button>
+    </div>
+  <% } %>
+
+  <% if (error && error.length) { %>
+    <div class="alert flash-alert flash-error alert-dismissible fade show" role="alert">
+      <span class="flash-icon">❌</span>
+      <%= error[0] %>
+      <button type="button" class="btn-close flash-close" data-bs-dismiss="alert"></button>
+    </div>
+  <% } %>
+
+</div>
+
+<script>
+  setTimeout(() => {
+    const alerts = document.querySelectorAll(".flash-alert");
+    alerts.forEach(alert => {
+      alert.style.transition = "all 0.6s ease";
+      alert.style.opacity = "0";
+      alert.style.transform = "translateX(100px)";
+      setTimeout(() => alert.remove(), 600);
+    });
+  }, 4000);
+</script>
