@@ -19,9 +19,153 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&display=swap" rel="stylesheet">
+
+    <style>
+        /* LUXURY CLASSIC LOADER */
+        #luxury-loader {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, #2b1d0e 0%, #111827 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        #luxury-loader.hide-loader {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .classic-loader {
+            text-align: center;
+            animation: fadeUp 1s ease;
+        }
+
+        .hotel-logo {
+            font-size: 90px;
+            animation: royalPulse 1.8s infinite ease-in-out;
+            filter: drop-shadow(0 0 25px rgba(255,215,0,0.8));
+        }
+
+        .classic-loader h1 {
+            font-family: Georgia, serif;
+            font-size: 52px;
+            letter-spacing: 5px;
+            color: #ffd700;
+            margin-top: 15px;
+            text-shadow: 0 0 18px rgba(255,215,0,0.4);
+        }
+
+        .classic-loader p {
+            color: #f8e9b0;
+            font-size: 18px;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        .gold-line {
+            width: 220px;
+            height: 5px;
+            margin: 30px auto 0;
+            background: linear-gradient(90deg, transparent, gold, transparent);
+            border-radius: 10px;
+            animation: shineLine 1.6s infinite ease-in-out;
+        }
+
+        .floating-stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: gold;
+            border-radius: 50%;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        .star:nth-child(1) { top: 15%; left: 20%; animation-delay: 0s; }
+        .star:nth-child(2) { top: 25%; left: 75%; animation-delay: 1s; }
+        .star:nth-child(3) { top: 60%; left: 15%; animation-delay: 2s; }
+        .star:nth-child(4) { top: 70%; left: 80%; animation-delay: 0.5s; }
+        .star:nth-child(5) { top: 40%; left: 50%; animation-delay: 1.5s; }
+
+        @keyframes royalPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.9;
+            }
+            50% {
+                transform: scale(1.12);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shineLine {
+            0% {
+                transform: scaleX(0.4);
+                opacity: 0.4;
+            }
+            50% {
+                transform: scaleX(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scaleX(0.4);
+                opacity: 0.4;
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.2;
+                transform: scale(0.7);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.4);
+            }
+        }
+    </style>
 </head>
 
 <body>
+
+    <!-- LUXURY LOADER -->
+    <div id="luxury-loader">
+
+        <div class="floating-stars">
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+            <div class="star"></div>
+        </div>
+
+        <div class="classic-loader">
+            <div class="hotel-logo">🏛️</div>
+            <h1>TripNEST</h1>
+            <p>Luxury stays are being prepared...</p>
+            <div class="gold-line"></div>
+        </div>
+    </div>
 
     <!-- Navbar -->
     <%- include("../includes/navbar.ejs") %>
@@ -40,6 +184,17 @@
 
     <!-- Custom JS -->
     <script src="/js/script.js"></script>
+
+    <!-- LOADER SCRIPT -->
+    <script>
+        window.addEventListener("load", function () {
+            const loader = document.getElementById("luxury-loader");
+
+            setTimeout(() => {
+                loader.classList.add("hide-loader");
+            }, 1500);
+        });
+    </script>
 
 </body>
 </html>
