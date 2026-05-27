@@ -73,22 +73,6 @@
     box-shadow: 0 15px 35px rgba(239,68,68,0.45);
   }
 
-  .cancel-btn::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -120%;
-    width: 100%;
-    height: 100%;
-    background: rgba(255,255,255,0.35);
-    transform: skewX(-25deg);
-    transition: 0.7s;
-  }
-
-  .cancel-btn:hover::before {
-    left: 120%;
-  }
-
   .empty-box {
     max-width: 500px;
     margin: auto;
@@ -147,19 +131,50 @@
           <div class="booking-card">
 
             <div class="booking-header">
-              <h4 class="mb-1"><%= booking.listing.title %></h4>
-              <small>📍 <%= booking.listing.location %></small>
+              <h4 class="mb-1">
+                <%= booking.listing ? booking.listing.title : "Deleted Listing" %>
+              </h4>
+              <small>
+                📍 <%= booking.listing ? booking.listing.location : "Location unavailable" %>
+              </small>
             </div>
 
             <div class="booking-body">
-              <div class="booking-info">📅 Date: <%= booking.date.toDateString() %></div>
-              <div class="booking-info">🚪 Room No: <%= booking.roomNumber %></div>
-              <div class="booking-info">👥 Guests: <%= booking.guests %></div>
-              <div class="booking-info">🧒 Children: <%= booking.children %></div>
-              <div class="booking-info">💳 Payment: <%= booking.paymentMethod %></div>
+
+              <div class="booking-info">
+                📅 Check In:
+                <%= booking.checkIn ? booking.checkIn.toDateString() : "N/A" %>
+              </div>
+
+              <div class="booking-info">
+                🏁 Check Out:
+                <%= booking.checkOut ? booking.checkOut.toDateString() : "N/A" %>
+              </div>
+
+              <div class="booking-info">
+                🚪 Room No: <%= booking.roomNumber || "N/A" %>
+              </div>
+
+              <div class="booking-info">
+                👥 Guests: <%= booking.guests || 0 %>
+              </div>
+
+              <div class="booking-info">
+                🧒 Children: <%= booking.children || 0 %>
+              </div>
+
+              <div class="booking-info">
+                💳 Payment: <%= booking.paymentMethod || "N/A" %>
+              </div>
+
+              <div class="booking-info">
+                💰 Total Price: ₹ <%= booking.finalPrice || 0 %>
+              </div>
 
               <% if (booking.notes) { %>
-                <div class="booking-info">📝 Notes: <%= booking.notes %></div>
+                <div class="booking-info">
+                  📝 Notes: <%= booking.notes %>
+                </div>
               <% } %>
 
               <form action="/bookings/<%= booking._id %>?_method=DELETE" method="POST">
@@ -167,8 +182,8 @@
                   ❌ Cancel Booking
                 </button>
               </form>
-            </div>
 
+            </div>
           </div>
         </div>
       <% }) %>

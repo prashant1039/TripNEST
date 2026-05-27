@@ -68,10 +68,17 @@ router.get("/:id/book",
       return res.redirect("/listings");
     }
 
+    const basePrice = Number(listing.price) || 1000;
+
     const allRooms = [
-      101, 102, 103, 104, 105,
-      201, 202, 203, 204, 205,
-      301, 302, 303, 304, 305
+      { number: 101, type: "Standard", price: basePrice },
+      { number: 102, type: "Standard", price: basePrice },
+      { number: 201, type: "Deluxe", price: basePrice + 800 },
+      { number: 202, type: "Deluxe", price: basePrice + 800 },
+      { number: 301, type: "Premium", price: basePrice + 1500 },
+      { number: 302, type: "Premium", price: basePrice + 1500 },
+      { number: 401, type: "Suite", price: basePrice + 2500 },
+      { number: 402, type: "Suite", price: basePrice + 2500 },
     ];
 
     res.render("listings/book", {
@@ -95,34 +102,60 @@ router.post("/:id/book",
 
       const b = req.body.booking || {};
 
+      const checkIn = new Date(b.checkIn);
+      const checkOut = new Date(b.checkOut);
+      const roomNumber = Number(b.roomNumber);
+
+      if (!b.checkIn || !b.checkOut || checkOut <= checkIn) {
+        req.flash("error", "❌ Check-out date must be after check-in date.");
+        return res.redirect(`/listings/${listing._id}/book`);
+      }
+
+      if (!roomNumber) {
+        req.flash("error", "❌ Please select a room.");
+        return res.redirect(`/listings/${listing._id}/book`);
+      }
+
+      const alreadyBooked = await Booking.findOne({
+        listing: listing._id,
+        roomNumber,
+        checkIn: { $lt: checkOut },
+        checkOut: { $gt: checkIn },
+      });
+
+      if (alreadyBooked) {
+        req.flash(
+          "error",
+          "❌ This room is already booked during these dates. Please choose another room or different dates."
+        );
+        return res.redirect(`/listings/${listing._id}/book`);
+      }
+
+      const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+      const finalPrice = Number(b.finalPrice) || Number(listing.price) * nights;
+
       const booking = new Booking({
         listing: listing._id,
         user: req.user._id,
         name: b.name,
         phone: b.phone,
-        date: b.date,
+        checkIn,
+        checkOut,
         guests: Number(b.guests),
         children: Number(b.children || 0),
-        roomNumber: Number(b.roomNumber),
+        roomNumber,
         paymentMethod: b.paymentMethod,
-        notes: b.notes || ""
+        notes: b.notes || "",
+        finalPrice,
       });
 
       await booking.save();
 
-      req.flash("success", `🎉 Room ${b.roomNumber} booked successfully!`);
+      req.flash("success", `🎉 Room ${roomNumber} booked successfully!`);
       res.redirect(`/listings/${listing._id}`);
 
     } catch (err) {
-      if (err.code === 11000) {
-        req.flash(
-          "error",
-          "❌ This room is already booked for the selected date. Please choose another room."
-        );
-      } else {
-        req.flash("error", err.message);
-      }
-
+      req.flash("error", err.message);
       res.redirect(`/listings/${req.params.id}/book`);
     }
   })

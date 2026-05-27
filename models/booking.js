@@ -23,7 +23,12 @@ const bookingSchema = new mongoose.Schema({
     required: true,
   },
 
-  date: {
+  checkIn: {
+    type: Date,
+    required: true,
+  },
+
+  checkOut: {
     type: Date,
     required: true,
   },
@@ -51,15 +56,15 @@ const bookingSchema = new mongoose.Schema({
 
   notes: String,
 
+  finalPrice: {
+    type: Number,
+    required: true,
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
-
-bookingSchema.index(
-  { listing: 1, date: 1, roomNumber: 1 },
-  { unique: true }
-);
 
 module.exports = mongoose.model("Booking", bookingSchema);

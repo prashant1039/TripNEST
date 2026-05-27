@@ -1,27 +1,20 @@
 <% layout("/layouts/boilerplate") -%>
 
 <style>
-  body {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    overflow-x: hidden;
-  }
+  body { background: linear-gradient(135deg, #0f172a, #1e293b); }
 
   .booking-container {
     min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     padding: 40px 15px;
   }
 
   .booking-card {
-    width: 100%;
-    max-width: 720px;
+    max-width: 780px;
+    margin: auto;
     background: rgba(255,255,255,0.96);
     padding: 35px;
     border-radius: 28px;
     box-shadow: 0 20px 45px rgba(0,0,0,0.35);
-    animation: fadeUp 1s ease;
   }
 
   .booking-title {
@@ -33,7 +26,7 @@
   .booking-subtitle {
     text-align: center;
     color: #636e72;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
   }
 
   .hotel-price {
@@ -46,7 +39,6 @@
 
   .form-label {
     font-weight: 700;
-    color: #2d3436;
   }
 
   .form-control {
@@ -57,7 +49,7 @@
 
   .room-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
     gap: 14px;
     margin-top: 10px;
   }
@@ -85,13 +77,19 @@
     box-shadow: 0 15px 35px rgba(99,102,241,0.4);
   }
 
-  .room-card h5 {
-    margin: 0;
-    font-weight: 800;
+  .summary-box {
+    background: #f8fafc;
+    border-radius: 18px;
+    padding: 18px;
+    margin: 20px 0;
+    border: 1px solid #e5e7eb;
   }
 
-  .room-card span {
-    font-size: 13px;
+  .summary-line {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    font-weight: 600;
   }
 
   .animated-btn {
@@ -123,17 +121,6 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
-
-  @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(45px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 </style>
 
 <div class="booking-container">
@@ -146,7 +133,7 @@
       ₹ <%= listing.price %> / Night
     </div>
 
-    <form action="/listings/<%= listing._id %>/book" method="POST">
+    <form action="/listings/<%= listing._id %>/book" method="POST" id="bookingForm">
 
       <div class="mb-3">
         <label class="form-label">Full Name</label>
@@ -158,21 +145,35 @@
         <input type="tel" name="booking[phone]" class="form-control" required placeholder="Enter phone number">
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">Select Date</label>
-        <input type="date" name="booking[date]" class="form-control" required>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Check In</label>
+          <input type="date" name="booking[checkIn]" id="checkIn" class="form-control" required>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Check Out</label>
+          <input type="date" name="booking[checkOut]" id="checkOut" class="form-control" required>
+        </div>
       </div>
 
       <input type="hidden" name="booking[roomNumber]" id="selectedRoom" required>
+      <input type="hidden" name="booking[finalPrice]" id="finalPrice" required>
 
       <div class="mb-3">
         <label class="form-label">Choose Your Room</label>
 
         <div class="room-grid">
           <% allRooms.forEach(room => { %>
-            <div class="room-card" data-room="<%= room %>">
-              <h5>Room <%= room %></h5>
-              <span>✅ Available</span>
+            <div
+              class="room-card"
+              data-room="<%= room.number %>"
+              data-price="<%= room.price %>"
+              data-type="<%= room.type %>"
+            >
+              <h5>Room <%= room.number %></h5>
+              <span><%= room.type %></span><br>
+              <small>₹ <%= room.price %> / night</small>
             </div>
           <% }) %>
         </div>
@@ -205,6 +206,14 @@
         <textarea name="booking[notes]" class="form-control" placeholder="Any special request?"></textarea>
       </div>
 
+      <div class="summary-box">
+        <h5>Booking Summary</h5>
+        <div class="summary-line"><span>Room</span><span id="summaryRoom">Not selected</span></div>
+        <div class="summary-line"><span>Type</span><span id="summaryType">-</span></div>
+        <div class="summary-line"><span>Nights</span><span id="summaryNights">0</span></div>
+        <div class="summary-line"><span>Total</span><span>₹ <span id="summaryPrice">0</span></span></div>
+      </div>
+
       <button class="animated-btn">
         ✨ Confirm Luxury Booking
       </button>
@@ -216,12 +225,56 @@
 <script>
   const roomCards = document.querySelectorAll(".room-card");
   const selectedRoom = document.getElementById("selectedRoom");
+  const finalPrice = document.getElementById("finalPrice");
+
+  const checkIn = document.getElementById("checkIn");
+  const checkOut = document.getElementById("checkOut");
+
+  const summaryRoom = document.getElementById("summaryRoom");
+  const summaryType = document.getElementById("summaryType");
+  const summaryNights = document.getElementById("summaryNights");
+  const summaryPrice = document.getElementById("summaryPrice");
+
+  let selectedRoomPrice = 0;
+
+  function calculateTotal() {
+    if (!checkIn.value || !checkOut.value || !selectedRoomPrice) return;
+
+    const inDate = new Date(checkIn.value);
+    const outDate = new Date(checkOut.value);
+
+    const nights = Math.ceil((outDate - inDate) / (1000 * 60 * 60 * 24));
+
+    if (nights <= 0) {
+      summaryNights.innerText = "0";
+      summaryPrice.innerText = "0";
+      finalPrice.value = "";
+      return;
+    }
+
+    const total = nights * selectedRoomPrice;
+
+    summaryNights.innerText = nights;
+    summaryPrice.innerText = total;
+    finalPrice.value = total;
+  }
 
   roomCards.forEach(card => {
     card.addEventListener("click", () => {
       roomCards.forEach(c => c.classList.remove("selected"));
+
       card.classList.add("selected");
+
       selectedRoom.value = card.dataset.room;
+      selectedRoomPrice = Number(card.dataset.price);
+
+      summaryRoom.innerText = "Room " + card.dataset.room;
+      summaryType.innerText = card.dataset.type;
+
+      calculateTotal();
     });
   });
+
+  checkIn.addEventListener("change", calculateTotal);
+  checkOut.addEventListener("change", calculateTotal);
 </script>
